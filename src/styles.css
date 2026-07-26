@@ -163,7 +163,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.12; let
   gap: 16px;
 }
 .nav__brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav__brand img { height: 26px; width: auto; }
+.nav__brand img { height: 40px; width: auto; }
 .nav__links { display: none; gap: 26px; align-items: center; }
 .nav__links a { text-decoration: none; font-weight: 600; font-size: 0.95rem; color: var(--cream); opacity: 0.85; }
 .nav__links a:hover, .nav__links a[aria-current="page"] { opacity: 1; color: var(--lime); }
@@ -216,25 +216,17 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.12; let
     box-shadow: inset 0 0 0 1px rgba(246,239,214,0.1);
   }
   .hero__art .m-leaf { position: absolute; color: var(--lime); opacity: 0.16; }
-  .hero__art .m-mark { position: relative; text-align: center; color: var(--cream); }
-  .hero__art .m-mark .big { font-family: var(--serif); font-size: 3.2rem; line-height: 1; }
-  .hero__art .m-mark .big .heart { color: var(--lime); }
-  .hero__art .m-mark .sub { font-family: var(--serif); font-style: italic; font-size: 1rem; opacity: 0.82; margin-top: 8px; }
+  .hero__art .m-heart { position: relative; width: min(300px, 62%); height: auto; }
 }
-.hero__logo { height: 42px; width: auto; margin-bottom: 20px; }
-.hero h1 {
-  font-size: clamp(2.6rem, 12vw, 4rem);
-  margin-bottom: 6px;
-}
-.hero h1 .heart { color: var(--lime); }
-.hero__tag { font-family: var(--serif); font-style: italic; font-size: 1.2rem; color: var(--cream); opacity: 0.9; margin-bottom: 16px; }
+.hero__brand { margin: 4px 0 16px; line-height: 0; }
+.hero__brand img { width: min(280px, 74vw); height: auto; display: block; }
 .hero__hook { font-size: 1.05rem; max-width: 34ch; color: rgba(246,239,214,0.9); margin-bottom: 20px; }
 .hero__cta { display: grid; gap: 12px; max-width: 340px; }
 
 @media (min-width: 860px) {
   .hero { padding: 76px 0 84px; }
   .hero__grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
-  .hero h1 { font-size: 4.4rem; }
+  .hero__brand img { width: min(320px, 32vw); }
   .hero__cta { grid-auto-flow: column; grid-auto-columns: max-content; }
   .hero__art { align-self: stretch; }
 }

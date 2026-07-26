@@ -82,7 +82,7 @@ function header(active) {
   return `<header class="site-header">
   <div class="wrap nav">
     <a class="nav__brand" href="index.html" aria-label="Anita Bistrot — home">
-      <img src="./assets/logo.svg" width="120" height="34" alt="Anita — piccolo bistrot, grandi emozioni">
+      <img src="./assets/logo-mark.png" width="40" height="34" alt="Anita — piccolo bistrot, grandi emozioni">
     </a>
     <nav class="nav__links" aria-label="Principale">
       ${link("index.html", "Home", "home")}
@@ -112,7 +112,7 @@ function footer() {
   return `<footer class="site-footer footer">
   <div class="wrap footer__grid">
     <div>
-      <img src="./assets/logo.svg" width="130" height="37" alt="Anita Bistrot" style="margin-bottom:14px">
+      <img src="./assets/logo-light.png" width="86" height="80" alt="Anita Bistrot" style="margin-bottom:14px">
       <p style="max-width:34ch;color:rgba(246,239,214,.8)">Piccolo bistrot, grandi emozioni. Colazione, aperitivo, cena e cocktail nel cuore di Pomigliano d'Arco.</p>
       <div class="footer__social" style="margin-top:18px">
         <a href="${s.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${I.ig}</a>
@@ -278,10 +278,8 @@ function pageHome() {
       ${heroLeaves}
       <div class="wrap hero__grid">
         <div>
-          <img class="hero__logo" src="./assets/logo.svg" width="150" height="42" alt="Anita — piccolo bistrot, grandi emozioni" fetchpriority="high">
           <span class="livepill" data-livepill><span class="dot" aria-hidden="true"></span><span>Vedi orari di apertura</span></span>
-          <h1>Anita <span class="heart" aria-hidden="true">♥</span></h1>
-          <p class="hero__tag">piccolo bistrot, grandi emozioni</p>
+          <h1 class="hero__brand"><img src="./assets/logo-light.png" width="300" height="280" alt="Anita — piccolo bistrot, grandi emozioni" fetchpriority="high"></h1>
           <p class="hero__hook">Colazione, aperitivo, cena e cocktail nel cuore di Pomigliano d'Arco.</p>
           <div class="hero__cta">
             <a class="btn btn-primary" href="${waHref}" target="_blank" rel="noopener">${I.wa} Prenota un tavolo</a>
@@ -291,7 +289,7 @@ function pageHome() {
         <div class="hero__art" aria-hidden="true">
           <span class="m-leaf" style="top:-14px;left:-14px;transform:rotate(25deg)">${bigLeaf(120)}</span>
           <span class="m-leaf" style="bottom:-20px;right:-16px;transform:rotate(-150deg)">${bigLeaf(150)}</span>
-          <span class="m-mark"><span class="big">Anita <span class="heart">♥</span></span><span class="sub">piccolo bistrot,<br>grandi emozioni</span></span>
+          <img class="m-heart" src="./assets/heart.png" width="300" height="268" alt="">
         </div>
       </div>
     </section>
@@ -572,7 +570,9 @@ function build() {
   cpSync(join(SRC, "styles.css"), join(OUT, "styles.css"));
   cpSync(join(SRC, "app.js"), join(OUT, "app.js"));
   cpSync(join(SRC, "assets", "fonts"), join(OUT, "assets", "fonts"), { recursive: true });
-  writeFileSync(join(OUT, "assets", "logo.svg"), logoSvg());
+  for (const f of ["logo-mark.png", "logo-light.png", "heart.png"]) {
+    cpSync(join(SRC, "assets", f), join(OUT, "assets", f));
+  }
 
   // pagine
   writeFileSync(join(OUT, "index.html"), pageHome());
