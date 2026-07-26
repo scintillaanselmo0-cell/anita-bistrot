@@ -1,0 +1,12 @@
+# Dipendenze
+node_modules/
+
+# Output del build (viene rigenerato da GitHub Actions ad ogni push)
+dist/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
