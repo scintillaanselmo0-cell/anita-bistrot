@@ -15,7 +15,7 @@ export const site = {
   //    sostituisci "whatsapp" con il CELLULARE del locale (es. "39333XXXXXXX").
   phoneDisplay: "081 015 5330",
   phoneDial: "+390810155330",       // usato in tel:
-  whatsapp: "390810155330",         // usato in wa.me/  (solo cifre, no + né spazi)
+  whatsapp: "393347727526",         // usato in wa.me/  (solo cifre, no + né spazi)
   whatsappText:
     "Ciao Anita! Vorrei prenotare un tavolo. Persone: __ · Giorno: __ · Ora: __ · Nome: __. Grazie!",
 
