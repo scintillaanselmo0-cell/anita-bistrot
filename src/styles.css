@@ -528,3 +528,6 @@ body.noscroll { overflow: hidden; }
 @media (min-width: 720px) {
   .cartmodal__panel { left: 50%; right: auto; transform: translateX(-50%); width: 460px; bottom: 0; max-height: 88vh; border-radius: 20px; margin-bottom: 3vh; }
 }
+
+/* link "Invia ordine" disabilitato finché mancano i campi obbligatori */
+.btn.is-disabled { opacity: .5; pointer-events: none; cursor: default; }

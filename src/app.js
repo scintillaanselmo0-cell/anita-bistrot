@@ -382,33 +382,46 @@
       '</div>' +
       '<div class="cartmodal__foot cartmodal__foot--2">' +
         '<button class="btn btn-outline-ink" type="button" id="backCart">Indietro</button>' +
-        '<button class="btn btn-primary" type="button" id="sendWa" disabled>Invia ordine su WhatsApp</button>' +
+        '<a class="btn btn-primary is-disabled" id="sendWa" target="_blank" rel="noopener" href="#">Invia ordine su WhatsApp</a>' +
       '</div>';
 
     var name = panel.querySelector("#f_name"), phone = panel.querySelector("#f_phone"),
         addr = panel.querySelector("#f_addr"), interno = panel.querySelector("#f_int"),
         note = panel.querySelector("#f_note"), send = panel.querySelector("#sendWa");
-    function check() {
-      send.disabled = !(name.value.trim() && phone.value.trim() && addr.value.trim());
+    var code = orderCode();
+    function curData() {
+      return {
+        name: name.value.trim(), phone: phone.value.trim(),
+        addr: addr.value.trim(), interno: interno.value.trim(), note: note.value.trim(),
+      };
     }
-    [name, phone, addr].forEach(function (i) { i.addEventListener("input", check); });
+    function valid() { return !!(name.value.trim() && phone.value.trim() && addr.value.trim()); }
+    // Tiene il link WhatsApp sempre pronto: così al tocco si apre davvero (niente popup bloccato)
+    function updateSend() {
+      if (valid()) {
+        lastCode = code;
+        lastMsg = buildMessage(curData(), code);
+        send.href = "https://wa.me/" + CFG.whatsapp + "?text=" + encodeURIComponent(lastMsg);
+        send.classList.remove("is-disabled");
+        send.removeAttribute("aria-disabled");
+      } else {
+        send.href = "#";
+        send.classList.add("is-disabled");
+        send.setAttribute("aria-disabled", "true");
+      }
+    }
+    [name, phone, addr, interno, note].forEach(function (i) { i.addEventListener("input", updateSend); });
+    updateSend();
     panel.querySelector("#backCart").addEventListener("click", function () { view = "cart"; renderView(); });
 
     // [SEGNAPOSTO PAGAMENTO] — qui in futuro si potrà aggiungere la scelta del
     // metodo di pagamento senza riscrivere il resto. Per ora nessun pagamento.
 
-    send.addEventListener("click", function () {
-      var data = {
-        name: name.value.trim(), phone: phone.value.trim(),
-        addr: addr.value.trim(), interno: interno.value.trim(), note: note.value.trim(),
-      };
-      lastCode = orderCode();
-      lastMsg = buildMessage(data, lastCode);
-      var url = "https://wa.me/" + CFG.whatsapp + "?text=" + encodeURIComponent(lastMsg);
-      var w = window.open(url, "_blank"); // tentativo di apertura automatica
-      clearCart();                        // svuota SOLO dopo aver aperto WhatsApp
-      view = "confirm"; renderView();
-      afterFabOnly();
+    send.addEventListener("click", function (ev) {
+      if (!valid()) { ev.preventDefault(); return; }     // campi mancanti: non fare nulla
+      // il link (target=_blank) apre WhatsApp; noi passiamo alla conferma e svuotiamo il carrello
+      lastCode = code; lastMsg = buildMessage(curData(), code);
+      setTimeout(function () { clearCart(); afterFabOnly(); view = "confirm"; renderView(); }, 350);
     });
   }
 
