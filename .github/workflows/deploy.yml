@@ -32,6 +32,11 @@ jobs:
       - name: Genera il sito statico
         run: npm run build
 
+      # Dominio personalizzato: mantiene il collegamento ad ogni pubblicazione.
+      # Se NON usi un dominio tuo, elimina questa riga (userai l'indirizzo .github.io).
+      - name: Imposta dominio
+        run: echo "www.anitabistrot.it" > dist/CNAME
+
       - name: Configura Pages
         uses: actions/configure-pages@v5
 

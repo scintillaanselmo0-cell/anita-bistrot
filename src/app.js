@@ -165,3 +165,300 @@
     init();
   }
 })();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ORDINE A DOMICILIO — carrello lato client + invio ordine su WhatsApp
+   Nessun backend, nessun pagamento. Dati in centesimi (interi).
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+  var CART_KEY = "anita_cart";
+
+  // Config iniettata da build (id="anita-order")
+  var CFG = { whatsapp: "", minCents: 0, feeCents: 0, freeOverCents: null, zoneNote: "" };
+  try {
+    var cfgEl = document.getElementById("anita-order");
+    if (cfgEl) CFG = Object.assign(CFG, JSON.parse(cfgEl.textContent));
+  } catch (e) {}
+
+  // ── Denaro ────────────────────────────────────────────────────────────────
+  function fmt(c) { return "€\u00A0" + (c / 100).toFixed(2).replace(".", ","); }
+
+  // ── Stato carrello ─────────────────────────────────────────────────────────
+  var cart = load();
+  function load() {
+    try { var v = JSON.parse(localStorage.getItem(CART_KEY)); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function save() {
+    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {}
+  }
+  function clearCart() { cart = []; save(); }
+  function qtyOf(id) { for (var i = 0; i < cart.length; i++) if (cart[i].id === id) return cart[i].qty; return 0; }
+  function count() { return cart.reduce(function (n, l) { return n + l.qty; }, 0); }
+  function subtotal() { return cart.reduce(function (n, l) { return n + l.price * l.qty; }, 0); }
+  function deliveryFee(sub) {
+    if (sub <= 0 || CFG.feeCents <= 0) return 0;
+    if (CFG.freeOverCents != null && sub >= CFG.freeOverCents) return 0;
+    return CFG.feeCents;
+  }
+  function total() { var s = subtotal(); return s + deliveryFee(s); }
+
+  function addItem(id, name, price) {
+    for (var i = 0; i < cart.length; i++) if (cart[i].id === id) { cart[i].qty++; save(); return; }
+    cart.push({ id: id, name: name, price: price, qty: 1 }); save();
+  }
+  function setQty(id, q) {
+    for (var i = 0; i < cart.length; i++) if (cart[i].id === id) {
+      cart[i].qty = q; if (q <= 0) cart.splice(i, 1); save(); return;
+    }
+  }
+  function incQty(id) { setQty(id, qtyOf(id) + 1); }
+  function decQty(id) { setQty(id, qtyOf(id) - 1); }
+
+  // ── Controlli "Aggiungi" / stepper sulle righe del menu ────────────────────
+  function renderBuy(el) {
+    var id = el.getAttribute("data-id");
+    var q = qtyOf(id);
+    if (q <= 0) {
+      el.innerHTML = '<button class="addbtn" type="button">Aggiungi</button>';
+    } else {
+      el.innerHTML =
+        '<div class="stepper" role="group" aria-label="Quantità">' +
+        '<button class="st" data-act="dec" type="button" aria-label="Riduci">–</button>' +
+        '<span class="st__n">' + q + '</span>' +
+        '<button class="st" data-act="inc" type="button" aria-label="Aumenta">+</button>' +
+        '</div>';
+    }
+  }
+  function refreshBuys() {
+    var els = document.querySelectorAll(".buy[data-id]");
+    for (var i = 0; i < els.length; i++) renderBuy(els[i]);
+  }
+
+  // Delega click sui controlli riga
+  document.addEventListener("click", function (ev) {
+    var wrap = ev.target.closest ? ev.target.closest(".buy[data-id]") : null;
+    if (!wrap) return;
+    var id = wrap.getAttribute("data-id");
+    if (ev.target.closest(".addbtn")) {
+      addItem(id, wrap.getAttribute("data-name"), parseInt(wrap.getAttribute("data-price"), 10) || 0);
+    } else {
+      var b = ev.target.closest(".st");
+      if (!b) return;
+      if (b.getAttribute("data-act") === "inc") incQty(id); else decQty(id);
+    }
+    afterChange();
+  });
+
+  // ── Pulsante carrello flottante (FAB) ──────────────────────────────────────
+  var fab;
+  function ensureFab() {
+    if (fab) return;
+    fab = document.createElement("button");
+    fab.type = "button";
+    fab.className = "cartfab";
+    fab.setAttribute("aria-label", "Apri il carrello");
+    fab.addEventListener("click", openModal);
+    document.body.appendChild(fab);
+  }
+  function updateFab() {
+    ensureFab();
+    var n = count();
+    if (n <= 0) { fab.classList.remove("is-on"); return; }
+    fab.classList.add("is-on");
+    fab.innerHTML =
+      '<span class="cartfab__ico" aria-hidden="true">🛒</span>' +
+      '<span class="cartfab__n">' + n + '</span>' +
+      '<span class="cartfab__t">' + fmt(subtotal()) + '</span>';
+  }
+
+  function afterChange() {
+    refreshBuys();
+    updateFab();
+    if (modal && modal.classList.contains("is-open")) renderView(); // aggiorna vista aperta
+  }
+
+  // ── Modale (carrello → checkout → conferma) ────────────────────────────────
+  var modal, panel, view = "cart", lastMsg = "", lastCode = "";
+  function ensureModal() {
+    if (modal) return;
+    modal = document.createElement("div");
+    modal.className = "cartmodal";
+    modal.innerHTML = '<div class="cartmodal__bg" data-close></div><div class="cartmodal__panel" role="dialog" aria-modal="true" aria-label="Il tuo ordine"></div>';
+    document.body.appendChild(modal);
+    panel = modal.querySelector(".cartmodal__panel");
+    modal.addEventListener("click", function (ev) {
+      if (ev.target.hasAttribute("data-close")) closeModal();
+    });
+  }
+  function openModal() { ensureModal(); view = "cart"; renderView(); modal.classList.add("is-open"); document.body.classList.add("noscroll"); }
+  function closeModal() { if (modal) { modal.classList.remove("is-open"); document.body.classList.remove("noscroll"); } }
+
+  function head(title) {
+    return '<div class="cartmodal__head"><h2>' + title + '</h2>' +
+      '<button class="cartmodal__x" type="button" data-close aria-label="Chiudi">✕</button></div>';
+  }
+
+  function renderView() {
+    if (view === "checkout") return renderCheckout();
+    if (view === "confirm") return renderConfirm();
+    return renderCart();
+  }
+
+  // Vista 1 — carrello
+  function renderCart() {
+    var sub = subtotal(), fee = deliveryFee(sub), tot = sub + fee;
+    if (!cart.length) {
+      panel.innerHTML = head("Il tuo ordine") +
+        '<div class="cartmodal__body"><p class="cart-empty">Il carrello è vuoto.<br>Aggiungi qualcosa dal menu per ordinare a domicilio.</p>' +
+        '<a class="btn btn-primary" href="menu.html" data-close>Vai al menu</a></div>';
+      return;
+    }
+    var lines = cart.map(function (l) {
+      return '<div class="cartline">' +
+        '<div class="cartline__nm">' + escapeHtml(l.name) + '</div>' +
+        '<div class="stepper stepper--sm" data-line="' + l.id + '">' +
+          '<button class="st" data-act="dec" type="button" aria-label="Riduci">–</button>' +
+          '<span class="st__n">' + l.qty + '</span>' +
+          '<button class="st" data-act="inc" type="button" aria-label="Aumenta">+</button>' +
+        '</div>' +
+        '<div class="cartline__pr">' + fmt(l.price * l.qty) + '</div>' +
+      '</div>';
+    }).join("");
+
+    var below = CFG.minCents > 0 && sub < CFG.minCents;
+    var notice = below
+      ? '<p class="cart-min">Ordine minimo ' + fmt(CFG.minCents) + ' — aggiungi ' + fmt(CFG.minCents - sub) + ' per procedere.</p>'
+      : "";
+    var feeRow = fee === 0 && sub > 0
+      ? '<span>Consegna gratis 🎉</span>'
+      : '<span>' + fmt(fee) + '</span>';
+
+    panel.innerHTML = head("Il tuo ordine") +
+      '<div class="cartmodal__body">' +
+        '<div class="cartlines">' + lines + '</div>' +
+        '<div class="cartsum">' +
+          '<div class="cartsum__row"><span>Subtotale</span><span>' + fmt(sub) + '</span></div>' +
+          '<div class="cartsum__row"><span>Consegna</span>' + feeRow + '</div>' +
+          '<div class="cartsum__row cartsum__tot"><span>Totale</span><span>' + fmt(tot) + '</span></div>' +
+        '</div>' + notice +
+      '</div>' +
+      '<div class="cartmodal__foot">' +
+        '<button class="btn btn-primary" type="button" id="toCheckout"' + (below ? " disabled" : "") + '>Procedi</button>' +
+      '</div>';
+
+    // stepper delle righe carrello
+    panel.querySelectorAll(".stepper[data-line]").forEach(function (s) {
+      var id = s.getAttribute("data-line");
+      s.addEventListener("click", function (ev) {
+        var b = ev.target.closest(".st"); if (!b) return;
+        if (b.getAttribute("data-act") === "inc") incQty(id); else decQty(id);
+        afterChange();
+      });
+    });
+    var go = panel.querySelector("#toCheckout");
+    if (go) go.addEventListener("click", function () { view = "checkout"; renderView(); });
+  }
+
+  // Vista 2 — checkout
+  function renderCheckout() {
+    var sub = subtotal(), fee = deliveryFee(sub), tot = sub + fee;
+    var sumLines = cart.map(function (l) {
+      return '<div class="cartsum__row"><span>' + l.qty + '× ' + escapeHtml(l.name) + '</span><span>' + fmt(l.price * l.qty) + '</span></div>';
+    }).join("");
+    panel.innerHTML = head("Completa l'ordine") +
+      '<div class="cartmodal__body">' +
+        (CFG.zoneNote ? '<p class="zone-note">' + escapeHtml(CFG.zoneNote) + '</p>' : "") +
+        '<div class="field"><label>Nome e cognome *</label><input type="text" id="f_name" autocomplete="name" inputmode="text"></div>' +
+        '<div class="field"><label>Telefono *</label><input type="tel" id="f_phone" autocomplete="tel" inputmode="tel"></div>' +
+        '<div class="field"><label>Indirizzo (via e civico) *</label><input type="text" id="f_addr" autocomplete="street-address"></div>' +
+        '<div class="field"><label>Interno / citofono / piano</label><input type="text" id="f_int"></div>' +
+        '<div class="field"><label>Note (allergie, citofono rotto…)</label><textarea id="f_note" rows="2"></textarea></div>' +
+        '<div class="cartsum">' + sumLines +
+          '<div class="cartsum__row"><span>Consegna</span><span>' + (fee === 0 && sub > 0 ? "Gratis" : fmt(fee)) + '</span></div>' +
+          '<div class="cartsum__row cartsum__tot"><span>Totale</span><span>' + fmt(tot) + '</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cartmodal__foot cartmodal__foot--2">' +
+        '<button class="btn btn-outline-ink" type="button" id="backCart">Indietro</button>' +
+        '<button class="btn btn-primary" type="button" id="sendWa" disabled>Invia ordine su WhatsApp</button>' +
+      '</div>';
+
+    var name = panel.querySelector("#f_name"), phone = panel.querySelector("#f_phone"),
+        addr = panel.querySelector("#f_addr"), interno = panel.querySelector("#f_int"),
+        note = panel.querySelector("#f_note"), send = panel.querySelector("#sendWa");
+    function check() {
+      send.disabled = !(name.value.trim() && phone.value.trim() && addr.value.trim());
+    }
+    [name, phone, addr].forEach(function (i) { i.addEventListener("input", check); });
+    panel.querySelector("#backCart").addEventListener("click", function () { view = "cart"; renderView(); });
+
+    // [SEGNAPOSTO PAGAMENTO] — qui in futuro si potrà aggiungere la scelta del
+    // metodo di pagamento senza riscrivere il resto. Per ora nessun pagamento.
+
+    send.addEventListener("click", function () {
+      var data = {
+        name: name.value.trim(), phone: phone.value.trim(),
+        addr: addr.value.trim(), interno: interno.value.trim(), note: note.value.trim(),
+      };
+      lastCode = orderCode();
+      lastMsg = buildMessage(data, lastCode);
+      var url = "https://wa.me/" + CFG.whatsapp + "?text=" + encodeURIComponent(lastMsg);
+      var w = window.open(url, "_blank"); // tentativo di apertura automatica
+      clearCart();                        // svuota SOLO dopo aver aperto WhatsApp
+      view = "confirm"; renderView();
+      afterFabOnly();
+    });
+  }
+
+  // Vista 3 — conferma
+  function renderConfirm() {
+    var url = "https://wa.me/" + CFG.whatsapp + "?text=" + encodeURIComponent(lastMsg);
+    panel.innerHTML = head("Ci siamo quasi!") +
+      '<div class="cartmodal__body">' +
+        '<p class="confirm-copy">Apri WhatsApp e premi invio per inviarci l\'ordine: lo riceviamo direttamente in chat e ti confermiamo tutto lì. 💜</p>' +
+        '<textarea class="confirm-msg" readonly rows="10">' + escapeHtml(lastMsg) + '</textarea>' +
+      '</div>' +
+      '<div class="cartmodal__foot">' +
+        '<a class="btn btn-primary" href="' + url + '" target="_blank" rel="noopener">Apri WhatsApp e invia l\'ordine</a>' +
+      '</div>';
+    var ta = panel.querySelector(".confirm-msg");
+    if (ta) ta.addEventListener("focus", function () { this.select(); });
+  }
+
+  function afterFabOnly() { refreshBuys(); updateFab(); }
+
+  // ── Messaggio WhatsApp (compatto) ──────────────────────────────────────────
+  function orderCode() {
+    var A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", s = "";
+    for (var i = 0; i < 4; i++) s += A.charAt(Math.floor(Math.random() * A.length));
+    return "AN-" + s;
+  }
+  function buildMessage(d, code) {
+    var sub = subtotal(), fee = deliveryFee(sub), tot = sub + fee;
+    var lines = cart.map(function (l) {
+      return l.qty + "× " + l.name + " — " + fmt(l.price * l.qty).replace("\u00A0", " ");
+    }).join("\n");
+    return "🧾 *Nuovo ordine — Anita Bistrot* (#" + code + ")\n\n" +
+      "*Prodotti:*\n" + lines + "\n\n" +
+      "Consegna: " + (fee === 0 ? "Gratis" : fmt(fee).replace("\u00A0", " ")) + "\n" +
+      "*TOTALE: " + fmt(tot).replace("\u00A0", " ") + "*\n\n" +
+      "*Nome:* " + d.name + "\n" +
+      "*Telefono:* " + d.phone + "\n" +
+      "*Indirizzo:* " + d.addr + (d.interno ? " (" + d.interno + ")" : "") + "\n" +
+      "*Note:* " + (d.note || "-");
+  }
+
+  // ── util ───────────────────────────────────────────────────────────────────
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ── Avvio ───────────────────────────────────────────────────────────────────
+  function start() { refreshBuys(); updateFab(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();

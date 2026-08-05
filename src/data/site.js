@@ -10,12 +10,21 @@ export const site = {
   url: "https://www.anitabistrot.it",
 
   // ── CONTATTI ────────────────────────────────────────────────────────────────
-  // ⚠️ VERIFICA: 390810155330 è una rete FISSA napoletana. wa.me apre WhatsApp
-  //    solo se questo numero è registrato su WhatsApp Business. In caso contrario
-  //    sostituisci "whatsapp" con il CELLULARE del locale (es. "39333XXXXXXX").
+  // Chiamate: fisso del locale. WhatsApp: cellulare (numero diverso).
   phoneDisplay: "081 015 5330",
-  phoneDial: "+390810155330",       // usato in tel:
-  whatsapp: "393347727526",         // usato in wa.me/  (solo cifre, no + né spazi)
+  phoneDial: "+390810155330",       // usato in tel: (fisso, per le chiamate)
+  whatsapp: "393347727526",         // usato in wa.me/  (cellulare, solo cifre, no + né spazi)
+
+  // ── CONSEGNA A DOMICILIO (ordine + carrello) ──────────────────────────────
+  // Gli ordini arrivano su WhatsApp (stesso numero "whatsapp" qui sopra).
+  // Importi in centesimi: 1500 = € 15,00. Metti 0 per disattivare una voce.
+  order: {
+    minCents: 1500,        // ordine minimo (0 = nessun minimo)   ⚠️ owner conferma
+    feeCents: 250,         // costo consegna (0 = gratis sempre)   ⚠️ owner conferma
+    freeOverCents: 3000,   // consegna gratis oltre questa soglia (null = disattiva) ⚠️ owner conferma
+    zoneNote: "Consegniamo a Pomigliano d'Arco e zone limitrofe. Fuori zona, scrivici su WhatsApp.",
+  },
+
   whatsappText:
     "Ciao Anita! Vorrei prenotare un tavolo. Persone: __ · Giorno: __ · Ora: __ · Nome: __. Grazie!",
 

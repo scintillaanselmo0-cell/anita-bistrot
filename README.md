@@ -64,7 +64,24 @@ npm run build     # genera la cartella dist/
 
 ---
 
-## ⚠️ Da verificare PRIMA del lancio
+## Ordine a domicilio (carrello + WhatsApp)
+
+Il cliente compone il carrello dal menu e, al momento dell'invio, si apre WhatsApp con
+l'ordine già scritto. Nessun pagamento online, nessun server: tutto sul telefono del cliente,
+l'ordine arriva in chat sul numero WhatsApp del locale.
+
+Impostazioni in `src/data/site.js` → blocco **`order`**:
+- `minCents` — ordine minimo (es. 1500 = € 15,00; 0 = nessun minimo)
+- `feeCents` — costo consegna (es. 250 = € 2,50; 0 = sempre gratis)
+- `freeOverCents` — consegna gratis sopra questa soglia (es. 3000 = € 30; `null` = disattiva)
+- `zoneNote` — testo sulla zona di consegna
+
+Cosa è ordinabile: di default cibo, soft drink e dessert sì; alcolici no. Per forzare una
+singola voce, in `menu.js` aggiungi `deliverable: true` o `deliverable: false` alle sue opzioni.
+
+⚠️ Valori minimo/costi/soglia sono da confermare con il locale.
+
+
 
 Impostati con i dati del brief, ma da confermare:
 

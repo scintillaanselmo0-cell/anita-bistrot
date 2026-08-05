@@ -11,6 +11,8 @@
 //     tags       ["novita","special","piccante","veg"]  → badge colorati
 //     priceFrom  true  → mostra "da € X,00"
 //     available  false → nasconde la voce senza cancellarla
+//     deliverable true/false → forza se la voce è ordinabile a domicilio
+//                 (di default: cibo/soft/dessert sì, alcolici no)
 //
 // Un gruppo con  compact:true  è una lista fitta (solo nome + prezzo), resa in
 // 2 colonne su desktop. Senza compact, ogni voce ha la sua riga con descrizione.

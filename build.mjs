@@ -19,6 +19,41 @@ const esc = (s = "") =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const money = (n) => "€\u00A0" + Number(n).toFixed(2).replace(".", ",");
 const priceOf = (item) => (item.priceFrom ? "da " : "") + money(item.price);
+const centsOf = (item) => Math.round(Number(item.price) * 100);
+
+// Cosa è ordinabile a domicilio. item.deliverable (true/false) ha sempre priorità.
+// Default: cibo/soft/dessert = sì; alcolici = no. Casi misti gestiti per gruppo.
+function deliverableOf(item, sectionId, groupTitle) {
+  if (typeof item.deliverable === "boolean") return item.deliverable;
+  if (item.available === false || item.priceFrom) return false;
+  const g = (groupTitle || "").toLowerCase();
+  if (sectionId === "cocktail") return g.includes("analcolic");
+  if (sectionId === "vini" || sectionId === "distillati") return false;
+  if (sectionId === "soft-birre") return !/birr|beer/.test(g);
+  return true; // colazione, brunch, caffetteria, ristorante
+}
+
+// id univoco e stabile per ogni voce ordinabile (usato dal carrello)
+const _idSeen = new Map();
+function buyId(name) {
+  const base =
+    "d-" +
+    String(name)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 40);
+  const n = (_idSeen.get(base) || 0) + 1;
+  _idSeen.set(base, n);
+  return n === 1 ? base : `${base}-${n}`;
+}
+function buyControl(item, sectionId, groupTitle, compact) {
+  if (!deliverableOf(item, sectionId, groupTitle)) return "";
+  const attrs = `data-id="${buyId(item.name)}" data-name="${esc(item.name)}" data-price="${centsOf(item)}"`;
+  return `<div class="buy${compact ? " buy--sm" : ""}" ${attrs}></div>`;
+}
 
 const waHref = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.whatsappText)}`;
 const telHref = `tel:${site.phoneDial}`;
@@ -162,8 +197,19 @@ function hoursJsonBlob() {
   })}</script>`;
 }
 
+function orderJsonBlob() {
+  const d = site.order || {};
+  return `<script type="application/json" id="anita-order">${JSON.stringify({
+    whatsapp: site.whatsapp,
+    minCents: d.minCents || 0,
+    feeCents: d.feeCents || 0,
+    freeOverCents: d.freeOverCents ?? null,
+    zoneNote: d.zoneNote || "",
+  })}</script>`;
+}
+
 function scripts() {
-  return `${hoursJsonBlob()}\n<script src="./app.js" defer></script>`;
+  return `${hoursJsonBlob()}\n${orderJsonBlob()}\n<script src="./app.js" defer></script>`;
 }
 
 // ── JSON-LD Restaurant ───────────────────────────────────────────────────────
@@ -216,7 +262,7 @@ function allergenLine(a = []) {
   if (!a.length) return "";
   return `<div class="mitem__alg">${a.map((x) => x.toUpperCase()).join(" · ")}</div>`;
 }
-function itemRow(item) {
+function itemRow(item, ctx = {}) {
   if (item.available === false) return "";
   return `<div class="mitem">
     <div class="mitem__body">
@@ -224,24 +270,29 @@ function itemRow(item) {
       ${item.desc ? `<div class="mitem__desc">${esc(item.desc)}</div>` : ""}
       ${allergenLine(item.allergens)}
     </div>
-    <div class="mitem__price">${priceOf(item)}</div>
+    <div class="mitem__side">
+      <div class="mitem__price">${priceOf(item)}</div>
+      ${buyControl(item, ctx.sectionId, ctx.groupTitle, false)}
+    </div>
   </div>`;
 }
-function compactRow(item) {
+function compactRow(item, ctx = {}) {
   if (item.available === false) return "";
-  return `<div class="row"><span class="nm">${esc(item.name)}${badges(item.tags)}</span><span class="pr">${priceOf(item)}</span></div>`;
+  const buy = buyControl(item, ctx.sectionId, ctx.groupTitle, true);
+  return `<div class="row"><span class="nm">${esc(item.name)}${badges(item.tags)}</span><span class="pr">${priceOf(item)}${buy}</span></div>`;
 }
-function groupHtml(g) {
+function groupHtml(g, sectionId) {
   const note = g.note ? `<p class="mgroup__note">${esc(g.note)}</p>` : "";
+  const ctx = { sectionId, groupTitle: g.title };
   if (g.compact) {
     return `<div class="mgroup">
       <h3 class="mgroup__title">${esc(g.title)}</h3>${note}
-      <div class="mcompact">${g.items.map(compactRow).join("")}</div>
+      <div class="mcompact">${g.items.map((i) => compactRow(i, ctx)).join("")}</div>
     </div>`;
   }
   return `<div class="mgroup">
     <h3 class="mgroup__title">${esc(g.title)}</h3>${note}
-    ${g.items.map(itemRow).join("")}
+    ${g.items.map((i) => itemRow(i, ctx)).join("")}
   </div>`;
 }
 function sectionHtml(sec) {
@@ -249,7 +300,7 @@ function sectionHtml(sec) {
     <div class="wrap">
       <div class="msec__title">${I.leaf}<h2>${esc(sec.title)}</h2></div>
       <div class="msec__rule"></div>
-      ${sec.groups.map(groupHtml).join("")}
+      ${sec.groups.map((g) => groupHtml(g, sec.id)).join("")}
     </div>
   </section>`;
 }
