@@ -25,7 +25,7 @@ const centsOf = (item) => Math.round(Number(item.price) * 100);
 // Default: cibo/soft/dessert = sì; alcolici = no. Casi misti gestiti per gruppo.
 function deliverableOf(item, sectionId, groupTitle) {
   if (typeof item.deliverable === "boolean") return item.deliverable;
-  if (item.available === false || item.priceFrom) return false;
+  if (item.available === false) return false;
   const g = (groupTitle || "").toLowerCase();
   if (sectionId === "cocktail") return g.includes("analcolic");
   if (sectionId === "vini" || sectionId === "distillati") return false;
@@ -51,7 +51,8 @@ function buyId(name) {
 }
 function buyControl(item, sectionId, groupTitle, compact) {
   if (!deliverableOf(item, sectionId, groupTitle)) return "";
-  const attrs = `data-id="${buyId(item.name)}" data-name="${esc(item.name)}" data-price="${centsOf(item)}"`;
+  const from = item.priceFrom ? ` data-from="1"` : "";
+  const attrs = `data-id="${buyId(item.name)}" data-name="${esc(item.name)}" data-price="${centsOf(item)}"${from}`;
   return `<div class="buy${compact ? " buy--sm" : ""}" ${attrs}></div>`;
 }
 

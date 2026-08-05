@@ -204,9 +204,9 @@
   }
   function total() { var s = subtotal(); return s + deliveryFee(s); }
 
-  function addItem(id, name, price) {
+  function addItem(id, name, price, from) {
     for (var i = 0; i < cart.length; i++) if (cart[i].id === id) { cart[i].qty++; save(); return; }
-    cart.push({ id: id, name: name, price: price, qty: 1 }); save();
+    cart.push({ id: id, name: name, price: price, qty: 1, from: !!from }); save();
   }
   function setQty(id, q) {
     for (var i = 0; i < cart.length; i++) if (cart[i].id === id) {
@@ -242,7 +242,7 @@
     if (!wrap) return;
     var id = wrap.getAttribute("data-id");
     if (ev.target.closest(".addbtn")) {
-      addItem(id, wrap.getAttribute("data-name"), parseInt(wrap.getAttribute("data-price"), 10) || 0);
+      addItem(id, wrap.getAttribute("data-name"), parseInt(wrap.getAttribute("data-price"), 10) || 0, wrap.getAttribute("data-from") === "1");
     } else {
       var b = ev.target.closest(".st");
       if (!b) return;
@@ -317,7 +317,9 @@
     }
     var lines = cart.map(function (l) {
       return '<div class="cartline">' +
-        '<div class="cartline__nm">' + escapeHtml(l.name) + '</div>' +
+        '<div class="cartline__nm">' + escapeHtml(l.name) +
+          (l.from ? '<span class="cartline__from">da ' + fmt(l.price) + ' · scrivi le varianti nelle note</span>' : '') +
+        '</div>' +
         '<div class="stepper stepper--sm" data-line="' + l.id + '">' +
           '<button class="st" data-act="dec" type="button" aria-label="Riduci">–</button>' +
           '<span class="st__n">' + l.qty + '</span>' +
@@ -364,17 +366,19 @@
   // Vista 2 — checkout
   function renderCheckout() {
     var sub = subtotal(), fee = deliveryFee(sub), tot = sub + fee;
+    var hasFrom = cart.some(function (l) { return l.from; });
     var sumLines = cart.map(function (l) {
-      return '<div class="cartsum__row"><span>' + l.qty + '× ' + escapeHtml(l.name) + '</span><span>' + fmt(l.price * l.qty) + '</span></div>';
+      return '<div class="cartsum__row"><span>' + l.qty + '× ' + escapeHtml(l.name) + (l.from ? ' (da)' : '') + '</span><span>' + fmt(l.price * l.qty) + '</span></div>';
     }).join("");
     panel.innerHTML = head("Completa l'ordine") +
       '<div class="cartmodal__body">' +
         (CFG.zoneNote ? '<p class="zone-note">' + escapeHtml(CFG.zoneNote) + '</p>' : "") +
+        (hasFrom ? '<p class="from-note">Hai prodotti a prezzo variabile (es. Club Sandwich): il totale è il prezzo di partenza. Scrivi nelle note come li vuoi — ti confermiamo il prezzo finale in chat.</p>' : "") +
         '<div class="field"><label>Nome e cognome *</label><input type="text" id="f_name" autocomplete="name" inputmode="text"></div>' +
         '<div class="field"><label>Telefono *</label><input type="tel" id="f_phone" autocomplete="tel" inputmode="tel"></div>' +
         '<div class="field"><label>Indirizzo (via e civico) *</label><input type="text" id="f_addr" autocomplete="street-address"></div>' +
         '<div class="field"><label>Interno / citofono / piano</label><input type="text" id="f_int"></div>' +
-        '<div class="field"><label>Note (allergie, citofono rotto…)</label><textarea id="f_note" rows="2"></textarea></div>' +
+        '<div class="field"><label>Note' + (hasFrom ? ' (indica qui le varianti)' : ' (allergie, citofono rotto…)') + '</label><textarea id="f_note" rows="2"></textarea></div>' +
         '<div class="cartsum">' + sumLines +
           '<div class="cartsum__row"><span>Consegna</span><span>' + (fee === 0 && sub > 0 ? "Gratis" : fmt(fee)) + '</span></div>' +
           '<div class="cartsum__row cartsum__tot"><span>Totale</span><span>' + fmt(tot) + '</span></div>' +
@@ -450,13 +454,16 @@
   }
   function buildMessage(d, code) {
     var sub = subtotal(), fee = deliveryFee(sub), tot = sub + fee;
+    var hasFrom = false;
     var lines = cart.map(function (l) {
-      return l.qty + "× " + l.name + " — " + fmt(l.price * l.qty).replace("\u00A0", " ");
+      if (l.from) hasFrom = true;
+      return l.qty + "× " + l.name + (l.from ? " (da)" : "") + " — " + fmt(l.price * l.qty).replace("\u00A0", " ");
     }).join("\n");
     return "🧾 *Nuovo ordine — Anita Bistrot* (#" + code + ")\n\n" +
       "*Prodotti:*\n" + lines + "\n\n" +
       "Consegna: " + (fee === 0 ? "Gratis" : fmt(fee).replace("\u00A0", " ")) + "\n" +
-      "*TOTALE: " + fmt(tot).replace("\u00A0", " ") + "*\n\n" +
+      "*TOTALE: " + fmt(tot).replace("\u00A0", " ") + "*" +
+      (hasFrom ? "\n(voci con \"da\" = prezzo di partenza, da confermare)" : "") + "\n\n" +
       "*Nome:* " + d.name + "\n" +
       "*Telefono:* " + d.phone + "\n" +
       "*Indirizzo:* " + d.addr + (d.interno ? " (" + d.interno + ")" : "") + "\n" +
