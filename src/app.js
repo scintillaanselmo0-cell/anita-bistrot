@@ -221,7 +221,8 @@
     var id = el.getAttribute("data-id");
     var q = qtyOf(id);
     if (q <= 0) {
-      el.innerHTML = '<button class="addbtn" type="button">Aggiungi</button>';
+      var label = el.getAttribute("data-label") || "Aggiungi";
+      el.innerHTML = '<button class="addbtn" type="button">' + label + '</button>';
     } else {
       el.innerHTML =
         '<div class="stepper" role="group" aria-label="Quantità">' +

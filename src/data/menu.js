@@ -288,7 +288,7 @@ export const menu = {
           title: "Dessert",
           note: "Per altri dessert chiedi in sala.",
           items: [
-            it("Crostiera", 6.0, { tags: ["novita"], allergens: ["g", "l", "u", "n"] }),
+            it("Crostiera", 6.0, { tags: ["crostiera"], allergens: ["g", "l", "u", "n"] }),
           ],
         },
       ],

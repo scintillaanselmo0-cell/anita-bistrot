@@ -83,5 +83,21 @@ export const site = {
       desc:
         "Dove siamo, orari, telefono e WhatsApp di Anita Bistrot. Via Passariello 60, Pomigliano d'Arco (NA).",
     },
+    crostiera: {
+      path: "crostiera.html",
+      title: "Crostiera a Pomigliano d'Arco | Anita Bistrot — rivenditore ufficiale",
+      desc:
+        "Da Anita Bistrot gusti Crostiera, la crostata al limone della tradizione napoletana con veri Limoni di Sorrento. A fetta ogni giorno (€ 6) o intera su prenotazione (€ 38).",
+    },
+  },
+
+  // ── CROSTIERA (Anita è rivenditore ufficiale) ────────────────────────────────
+  crostiera: {
+    site: "https://crostiera.it",
+    instagram: "https://www.instagram.com/crostiera/",
+    fettaCents: 600,
+    interaCents: 3800,
+    prenotaText:
+      "Ciao Anita! Vorrei prenotare una Crostiera intera (€ 38,00). Per quando: __ . Grazie!",
   },
 };

@@ -535,3 +535,63 @@ body.noscroll { overflow: hidden; }
 /* note "prezzo variabile" (voci con "da € X") */
 .cartline__from { display: block; font-size: 0.72rem; font-weight: 500; color: var(--orange); margin-top: 2px; }
 .from-note { background: rgba(233,168,92,.16); border: 1px solid var(--orange); color: #7a4f18; border-radius: 12px; padding: 10px 12px; font-size: 0.85rem; margin-bottom: 14px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   CROSTIERA — sezione rivenditore ufficiale (accento limone)
+   ════════════════════════════════════════════════════════════════════════ */
+:root { --lemon: #E9C548; }
+
+.eyebrow--lemon { color: var(--forest); }
+.eyebrow--lemon svg { color: var(--lemon); }
+
+/* badge nel menu (link) */
+.badge--crostiera { background: var(--lime); color: var(--lime-ink); text-decoration: none; border-bottom: 2px solid var(--lemon); }
+.badge--crostiera:hover { filter: brightness(1.03); }
+
+/* CTA "Aggiungi all'ordine" come pulsante pieno */
+.buy--cta { display: inline-flex; }
+.buy--cta .addbtn { min-height: 46px; padding: 0 22px; font-size: 1rem; }
+
+/* banda home Crostiera */
+.band--crostiera { background: var(--cream); color: var(--ink); border-radius: var(--radius-card); overflow: hidden; display: grid; grid-template-columns: 1fr; }
+.crostband__img { margin: -1px; }
+.crostband__img img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.crostband__body { padding: 22px; }
+.crostband__body h2 { font-family: var(--serif); font-size: 2rem; color: var(--purple); margin: 6px 0 8px; }
+.crostband__body p { color: var(--ink-soft); margin-bottom: 16px; }
+.band--crostiera-solid { display: block; background: var(--cream); border: 1px solid rgba(233,197,72,.5); }
+
+/* hero pagina */
+.crost-hero { background: linear-gradient(180deg, var(--cream-soft), var(--cream)); padding: 26px 0 6px; }
+.crost-hero__grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.crost-hero__text h1 { font-family: var(--serif); font-size: clamp(2.4rem, 11vw, 3.4rem); color: var(--purple); margin: 8px 0 6px; }
+.crost-sub { font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--ink); margin-bottom: 18px; }
+.crost-hero__img img { width: 100%; height: auto; max-height: 460px; object-fit: cover; border-radius: var(--radius-card); display: block; }
+
+.crost-narrow { max-width: 720px; }
+.crost-intro { font-size: 1.08rem; line-height: 1.7; color: var(--ink); }
+
+/* card "perché sceglierla" */
+.crostcards { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.crostcard { background: var(--cream-soft); border: 1px solid rgba(42,33,48,.08); border-radius: var(--radius-card); padding: 20px; }
+.crostcard__ico { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 999px; background: rgba(233,197,72,.22); color: var(--forest); margin-bottom: 10px; }
+.crostcard h3 { font-family: var(--serif); font-size: 1.2rem; color: var(--purple); margin-bottom: 6px; }
+.crostcard p { color: var(--ink-soft); }
+
+/* immagine lifestyle (una sola, centrata) */
+.crost-feature { margin: 0 auto; max-width: 460px; }
+.crost-feature img { width: 100%; height: auto; border-radius: var(--radius-card); display: block; }
+
+/* small print + targhetta logo (giallo su blu per contrasto) */
+.crost-fine { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; color: var(--ink-soft); line-height: 1.6; }
+.crost-fine__chip { flex-shrink: 0; display: inline-flex; align-items: center; background: #24357a; border-radius: 12px; padding: 12px 16px; }
+.crost-fine__chip img { height: 30px; width: auto; display: block; }
+.crost-fine p { margin: 0; min-width: 200px; flex: 1; }
+.crost-fine a { color: var(--purple); font-weight: 600; }
+
+@media (min-width: 720px) {
+  .band--crostiera { grid-template-columns: 1fr 1fr; align-items: center; }
+  .crostband__img img { height: 100%; min-height: 260px; }
+  .crost-hero__grid { grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: 34px; padding-bottom: 10px; }
+  .crostcards { grid-template-columns: repeat(3, 1fr); }
+}

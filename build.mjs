@@ -57,6 +57,7 @@ function buyControl(item, sectionId, groupTitle, compact) {
 }
 
 const waHref = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.whatsappText)}`;
+const waLink = (text) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 const telHref = `tel:${site.phoneDial}`;
 const addrLine = `${site.address.street}, ${site.address.postalCode} ${site.address.locality} (${site.address.region})`;
 const mapQuery = encodeURIComponent(`${site.name} ${site.address.street} ${site.address.locality}`);
@@ -80,7 +81,7 @@ const I = {
   home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>`,
   menuIcon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
 };
-const badgeLabels = { novita: "Novità", special: "Special", piccante: "Piccante", veg: "Veg" };
+const badgeLabels = { novita: "Novità", special: "Special", piccante: "Piccante", veg: "Veg", crostiera: "Ufficiale Crostiera" };
 
 // ── Partials ─────────────────────────────────────────────────────────────────
 function head(page, { jsonld = "" } = {}) {
@@ -123,6 +124,7 @@ function header(active) {
     <nav class="nav__links" aria-label="Principale">
       ${link("index.html", "Home", "home")}
       ${link("menu.html", "Menu", "menu")}
+      ${link("crostiera.html", "Crostiera", "crostiera")}
       ${link("chi-siamo.html", "Chi siamo", "about")}
       ${link("contatti.html", "Contatti", "contact")}
     </nav>
@@ -132,6 +134,7 @@ function header(active) {
       <div class="sheet">
         <a href="index.html">Home</a>
         <a href="menu.html">Menu</a>
+        <a href="crostiera.html">Crostiera</a>
         <a href="chi-siamo.html">Chi siamo</a>
         <a href="contatti.html">Contatti</a>
       </div>
@@ -256,7 +259,11 @@ function restaurantJsonLd() {
 function badges(tags = []) {
   return tags
     .filter((t) => badgeLabels[t])
-    .map((t) => `<span class="badge badge--${t}">${badgeLabels[t]}</span>`)
+    .map((t) =>
+      t === "crostiera"
+        ? `<a class="badge badge--crostiera" href="crostiera.html">${badgeLabels[t]}</a>`
+        : `<span class="badge badge--${t}">${badgeLabels[t]}</span>`
+    )
     .join("");
 }
 function allergenLine(a = []) {
@@ -370,6 +377,25 @@ function pageHome() {
     </section>
 
     <section class="section" style="padding-top:0" id="eventi">
+      <div class="wrap">
+        <div class="band band--crostiera">
+          <div class="crostband__img">
+            <img src="./assets/crostiera/crostiera-hero.webp" width="1200" height="800" loading="lazy" alt="Crostiera, la crostata al limone napoletana">
+          </div>
+          <div class="crostband__body">
+            <span class="eyebrow eyebrow--lemon">${I.leaf} Rivenditore ufficiale</span>
+            <h2>Crostiera</h2>
+            <p>La crostata al limone della tradizione napoletana, con veri Limoni di Sorrento. Da Anita, a fetta ogni giorno.</p>
+            <div class="btnrow">
+              <div class="buy buy--cta" data-id="d-crostiera" data-name="Crostiera" data-price="${site.crostiera.fettaCents}" data-label="Aggiungi all'ordine"></div>
+              <a class="btn btn-outline-ink" href="crostiera.html">Scopri la Crostiera</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
       <div class="wrap">
         <div class="band band--eventi">
           <span class="leafcorner">${bigLeaf(120)}</span>
@@ -588,7 +614,105 @@ function pageContact() {
     footer() + bottomBar() + scripts() + "\n</body></html>";
 }
 
-// ── Logo placeholder + foglia decorativa ─────────────────────────────────────
+// ── Pagina Crostiera (Anita rivenditore ufficiale) ───────────────────────────
+function crostieraJsonLd() {
+  const img = `${site.url}/assets/crostiera/crostiera-hero.webp`;
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "Crostiera",
+    description:
+      "Crostata al limone della tradizione napoletana con veri Limoni di Sorrento, venduta da Anita Bistrot (rivenditore ufficiale).",
+    brand: { "@type": "Brand", name: "Crostiera" },
+    image: [img],
+    offers: [
+      { "@type": "Offer", name: "Crostiera (fetta)", price: "6.00", priceCurrency: "EUR", availability: "https://schema.org/InStock" },
+      { "@type": "Offer", name: "Crostiera (intera)", price: "38.00", priceCurrency: "EUR", availability: "https://schema.org/PreOrder" },
+    ],
+    sameAs: [site.crostiera.site, site.crostiera.instagram],
+  });
+}
+
+function crostCard(title, text) {
+  return `<div class="crostcard"><span class="crostcard__ico">${I.leaf}</span><h3>${title}</h3><p>${text}</p></div>`;
+}
+
+function pageCrostiera() {
+  const prenotaHref = waLink(site.crostiera.prenotaText);
+  return (
+    head("crostiera", { jsonld: crostieraJsonLd() }) +
+    header("crostiera") +
+    `<main id="main">
+    <section class="crost-hero">
+      <div class="wrap crost-hero__grid">
+        <div class="crost-hero__text">
+          <span class="eyebrow eyebrow--lemon">${I.leaf} Rivenditore ufficiale</span>
+          <h1>Crostiera</h1>
+          <p class="crost-sub">La crostata al limone della tradizione napoletana — da gustare da Anita.</p>
+          <div class="btnrow">
+            <div class="buy buy--cta" data-id="d-crostiera" data-name="Crostiera" data-price="${site.crostiera.fettaCents}" data-label="Aggiungi all'ordine"></div>
+            <a class="btn btn-outline-ink" href="${prenotaHref}" target="_blank" rel="noopener">${I.wa} Prenota una Crostiera intera</a>
+          </div>
+        </div>
+        <div class="crost-hero__img">
+          <img src="./assets/crostiera/crostiera-hero.webp" width="1200" height="800" fetchpriority="high" alt="Crostiera, crostata al limone napoletana su piatto">
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap crost-narrow">
+        <p class="crost-intro">Crostiera è molto più di un dolce: è un piccolo viaggio tra i vicoli e le terrazze della Costiera, racchiuso in una fetta. Nasce da una ricetta di famiglia, custodita con amore, e dai profumi inconfondibili dei Limoni di Sorrento. Semplice all'apparenza, ma ricca di gusto, storia e dolcezza. Da Anita la porti in tavola tutti i giorni.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="section__head"><span class="eyebrow eyebrow--lemon">${I.leaf} Perché sceglierla</span><h2>Tre buoni motivi</h2></div>
+        <div class="crostcards">
+          ${crostCard("Ricetta della tradizione", "Frolla fragrante e crema al limone fresca e vellutata.")}
+          ${crostCard("Veri Limoni di Sorrento", "Solo ingredienti autentici, nulla di artificiale.")}
+          ${crostCard("Perfetta per ogni occasione", "Dal dopocena a Pasqua e Natale, o solo per coccolarti.")}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <figure class="crost-feature">
+          <img src="./assets/crostiera/crostiera-lifestyle.webp" width="1000" height="1273" loading="lazy" alt="La Crostiera nella sua confezione, pronta da gustare da Anita">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="band band--crostiera band--crostiera-solid">
+          <div class="crostband__body">
+            <h2>Da Anita</h2>
+            <p>Da Anita trovi la Crostiera ogni giorno come dessert, a fetta (${money(6)}). Vuoi una Crostiera intera per una festa, un regalo o un evento? Prenotala su WhatsApp: intera ${money(38)}.</p>
+            <div class="btnrow">
+              <div class="buy buy--cta" data-id="d-crostiera" data-name="Crostiera" data-price="${site.crostiera.fettaCents}" data-label="Aggiungi all'ordine"></div>
+              <a class="btn btn-purple" href="${prenotaHref}" target="_blank" rel="noopener">${I.wa} Prenota intera · ${money(38)}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap crost-narrow">
+        <div class="crost-fine">
+          <span class="crost-fine__chip"><img src="./assets/crostiera/crostiera-logo.png" width="140" height="42" loading="lazy" alt="Crostiera"></span>
+          <p>Freschissima fino a 5 giorni. Crostiera è un marchio di cui Anita Bistrot è rivenditore ufficiale. Foto: Crostiera. <a href="${site.crostiera.site}" target="_blank" rel="noopener">Scopri Crostiera</a></p>
+        </div>
+      </div>
+    </section>
+  </main>` +
+    footer() + bottomBar() + scripts() + "\n</body></html>"
+  );
+}
+
 function bigLeaf(size) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 3s-9-1-14 4C1 12 3 20 3 20s1-6 5-10c3-3 8-4 8-4s-5 2-8 6c-2 2.5-3 6-3 6s7 1 12-4c4-4 3-11 3-11z"/></svg>`;
 }
@@ -625,10 +749,12 @@ function build() {
   for (const f of ["logo-mark.png", "logo-light.png", "heart.png"]) {
     cpSync(join(SRC, "assets", f), join(OUT, "assets", f));
   }
+  cpSync(join(SRC, "assets", "crostiera"), join(OUT, "assets", "crostiera"), { recursive: true });
 
   // pagine
   writeFileSync(join(OUT, "index.html"), pageHome());
   writeFileSync(join(OUT, "menu.html"), pageMenu());
+  writeFileSync(join(OUT, "crostiera.html"), pageCrostiera());
   writeFileSync(join(OUT, "chi-siamo.html"), pageAbout());
   writeFileSync(join(OUT, "contatti.html"), pageContact());
 
@@ -640,7 +766,7 @@ function build() {
   let itemCount = 0;
   menu.sections.forEach((s) => s.groups.forEach((g) => (itemCount += g.items.length)));
   console.log("✓ Build completata in /dist");
-  console.log(`  4 pagine · ${menu.sections.length} sezioni menu · ${itemCount} voci · robots + sitemap`);
+  console.log(`  5 pagine · ${menu.sections.length} sezioni menu · ${itemCount} voci · robots + sitemap`);
 }
 
 build();
