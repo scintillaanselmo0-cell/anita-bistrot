@@ -11,6 +11,30 @@
   var HOURS = null;
   try { HOURS = hoursEl ? JSON.parse(hoursEl.textContent) : null; } catch (e) { HOURS = null; }
 
+  // Avviso temporaneo (ferie) iniettato in <script id="anita-notice">.
+  var NOTICE = null;
+  try { var nEl = document.getElementById("anita-notice"); if (nEl) NOTICE = JSON.parse(nEl.textContent); } catch (e) { NOTICE = null; }
+  function romeDate() {
+    try {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: (HOURS && HOURS.timezone) || "Europe/Rome",
+        year: "numeric", month: "2-digit", day: "2-digit",
+      }).format(new Date());
+    } catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+  function noticeOn() {
+    if (!NOTICE || !NOTICE.active) return false;
+    if (NOTICE.until && romeDate() > NOTICE.until) return false; // scaduto: torna normale
+    return true;
+  }
+  // Nasconde la fascia se la data di fine è passata (auto-scadenza).
+  function applyNoticeExpiry() {
+    var bar = document.querySelector(".notice[data-until]");
+    if (!bar) return;
+    var until = bar.getAttribute("data-until");
+    if (until && romeDate() > until) bar.style.display = "none";
+  }
+
   // ── Utility ────────────────────────────────────────────────────────────────
   function toMin(hhmm) {
     if (hhmm === "24:00") return 1440;
@@ -85,6 +109,15 @@
     var st = computeStatus();
     var pills = document.querySelectorAll("[data-livepill]");
     if (!pills.length) return;
+    // Durante le ferie la pill mostra l'avviso invece di aperto/chiuso.
+    if (noticeOn()) {
+      pills.forEach(function (el) {
+        el.classList.remove("is-open");
+        el.classList.add("is-closed");
+        el.innerHTML = '<span class="dot" aria-hidden="true"></span><span>' + (NOTICE.pillText || "In ferie") + '</span>';
+      });
+      return;
+    }
     pills.forEach(function (el) {
       el.classList.remove("is-open", "is-closed");
       var dot = '<span class="dot" aria-hidden="true"></span>';
@@ -153,6 +186,7 @@
 
   // ── Avvio ──────────────────────────────────────────────────────────────────
   function init() {
+    applyNoticeExpiry();
     renderPills();
     markToday();
     menuTabs();

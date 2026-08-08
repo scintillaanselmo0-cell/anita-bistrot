@@ -28,6 +28,16 @@ export const site = {
   whatsappText:
     "Ciao Anita! Vorrei prenotare un tavolo. Persone: __ · Giorno: __ · Ora: __ · Nome: __. Grazie!",
 
+  // ── AVVISO TEMPORANEO (es. ferie) ────────────────────────────────────────────
+  // Fascia in cima a tutte le pagine. Per SPEGNERLA: metti active: false.
+  // Dopo la data "until" sparisce da sola (e la pill torna normale).
+  notice: {
+    active: true,
+    text: "🌴 Siamo in ferie fino al 30 agosto — torniamo ancora più forti il 1° settembre!",
+    until: "2026-08-30",                       // ultimo giorno di ferie (AAAA-MM-GG)
+    pillText: "In ferie · torniamo il 1° settembre",
+  },
+
   address: {
     street: "Via Passariello 60",   // ⚠️ VERIFICA: 60 (Google) vs 64 (TripAdvisor)
     locality: "Pomigliano d'Arco",
@@ -91,7 +101,7 @@ export const site = {
     },
   },
 
-  // ── CROSTIERA (Anita è rivenditore ufficiale) ────────────────────────────────
+  // ── CROSTIERA (Anita è rivenditore ufficiale) ───────────────────────────────────
   crostiera: {
     site: "https://crostiera.it",
     instagram: "https://www.instagram.com/crostiera/",

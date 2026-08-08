@@ -595,3 +595,15 @@ body.noscroll { overflow: hidden; }
   .crost-hero__grid { grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: 34px; padding-bottom: 10px; }
   .crostcards { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   AVVISO TEMPORANEO (ferie) — fascia in cima
+   ════════════════════════════════════════════════════════════════════════ */
+.notice {
+  background: linear-gradient(90deg, var(--purple), var(--purple-deep));
+  color: var(--cream);
+  text-align: center;
+  padding: 11px 16px;
+  font: 600 0.92rem/1.4 var(--sans);
+  border-bottom: 3px solid var(--lime);
+}

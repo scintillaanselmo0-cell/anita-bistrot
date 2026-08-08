@@ -110,7 +110,13 @@ function head(page, { jsonld = "" } = {}) {
 ${jsonld ? `<script type="application/ld+json">${jsonld}</script>` : ""}
 ${ga}
 </head>
-<body>`;
+<body>${noticeBar()}`;
+}
+
+function noticeBar() {
+  const n = site.notice;
+  if (!n || !n.active) return "";
+  return `<div class="notice" data-until="${esc(n.until || "")}" role="status">${esc(n.text)}</div>`;
 }
 
 function header(active) {
@@ -212,8 +218,17 @@ function orderJsonBlob() {
   })}</script>`;
 }
 
+function noticeJsonBlob() {
+  const n = site.notice || {};
+  return `<script type="application/json" id="anita-notice">${JSON.stringify({
+    active: !!n.active,
+    until: n.until || "",
+    pillText: n.pillText || "",
+  })}</script>`;
+}
+
 function scripts() {
-  return `${hoursJsonBlob()}\n${orderJsonBlob()}\n<script src="./app.js" defer></script>`;
+  return `${hoursJsonBlob()}\n${orderJsonBlob()}\n${noticeJsonBlob()}\n<script src="./app.js" defer></script>`;
 }
 
 // ── JSON-LD Restaurant ───────────────────────────────────────────────────────
