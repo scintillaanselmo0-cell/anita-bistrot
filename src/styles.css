@@ -607,3 +607,15 @@ body.noscroll { overflow: hidden; }
   font: 600 0.92rem/1.4 var(--sans);
   border-bottom: 3px solid var(--lime);
 }
+
+/* blocco "Novità" nella pagina Crostiera (poster limone e albicocca) */
+.band--novita { display: grid; grid-template-columns: 1fr; gap: 10px; background: var(--cream-soft); border: 1px solid rgba(233,197,72,.6); border-radius: var(--radius-card); padding: 16px; }
+.crostnovita__img { text-align: center; }
+.crostnovita__img img { width: 100%; max-width: 340px; height: auto; border-radius: 12px; display: inline-block; box-shadow: var(--shadow); }
+.crostnovita__body { padding: 6px; }
+.crostnovita__body h2 { font-family: var(--serif); font-size: 2rem; color: var(--purple); margin: 6px 0 8px; }
+.crostnovita__body p { color: var(--ink-soft); margin-bottom: 16px; }
+@media (min-width: 720px) {
+  .band--novita { grid-template-columns: 360px 1fr; align-items: center; gap: 26px; padding: 24px; }
+  .crostnovita__img img { max-width: 100%; }
+}

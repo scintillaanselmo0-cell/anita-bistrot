@@ -675,6 +675,24 @@ function pageCrostiera() {
       </div>
     </section>
 
+    <section class="section crost-novita" style="padding-top:22px">
+      <div class="wrap">
+        <div class="band band--novita">
+          <div class="crostnovita__img">
+            <img src="./assets/crostiera/crostiera-novita.webp" width="900" height="1196" loading="lazy" alt="Novità Crostiera: nuovo gusto limone e albicocca">
+          </div>
+          <div class="crostnovita__body">
+            <span class="eyebrow eyebrow--lemon">${I.leaf} Novità in casa Crostiera</span>
+            <h2>Limone e albicocca</h2>
+            <p>La classica crema al limone incontra la dolcezza dell'albicocca: una nuova esplosione di sapori tutta da provare — e non te ne pentirai.</p>
+            <div class="btnrow">
+              <a class="btn btn-primary" href="${waLink("Ciao Anita! Vorrei provare la nuova Crostiera Limone e albicocca. Per quando: __ . Grazie!")}" target="_blank" rel="noopener">${I.wa} Ordinala su WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section">
       <div class="wrap crost-narrow">
         <p class="crost-intro">Crostiera è molto più di un dolce: è un piccolo viaggio tra i vicoli e le terrazze della Costiera, racchiuso in una fetta. Nasce da una ricetta di famiglia, custodita con amore, e dai profumi inconfondibili dei Limoni di Sorrento. Semplice all'apparenza, ma ricca di gusto, storia e dolcezza. Da Anita la porti in tavola tutti i giorni.</p>
