@@ -619,3 +619,29 @@ body.noscroll { overflow: hidden; }
   .band--novita { grid-template-columns: 360px 1fr; align-items: center; gap: 26px; padding: 24px; }
   .crostnovita__img img { max-width: 100%; }
 }
+
+/* righe ingredienti senza prezzo (es. Componi la tua piadina) */
+.row--noprice { justify-content: flex-start; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   COMPOSITORE PIADINA
+   ════════════════════════════════════════════════════════════════════════ */
+.piada { max-width: 640px; }
+.piada__group { margin-bottom: 22px; }
+.req { display: inline-block; font: 700 0.68rem/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; color: var(--lime-ink); background: var(--lime); padding: 4px 9px; border-radius: 999px; vertical-align: middle; margin-left: 8px; }
+.piada__opts { display: grid; gap: 8px; margin-top: 12px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--cream-soft); border: 1.5px solid rgba(42,33,48,.12); border-radius: 12px; cursor: pointer; min-height: 48px; }
+.opt input { width: 20px; height: 20px; accent-color: var(--forest); flex-shrink: 0; }
+.opt__nm { flex: 1; color: var(--ink); }
+.opt__pr { color: var(--ink-soft); font-weight: 700; white-space: nowrap; }
+.opt:has(input:checked) { border-color: var(--lime); background: #fff; }
+.piada__group.is-locked { opacity: .5; }
+.piada__group.is-locked .opt { cursor: not-allowed; }
+.piada__bar { margin-top: 24px; padding: 16px; background: var(--cream); border: 1px solid rgba(42,33,48,.14); border-radius: 14px; box-shadow: var(--shadow); }
+.piada__tot { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; color: var(--ink); font-weight: 600; }
+.piada__tot strong { font-family: var(--serif); font-size: 1.5rem; color: var(--purple); }
+.piada__bar .btn { width: 100%; }
+.piada__hint { margin: 10px 0 0; font-size: 0.85rem; color: var(--ink-soft); text-align: center; }
+@media (min-width: 720px) {
+  .piada__opts { grid-template-columns: 1fr 1fr; }
+}

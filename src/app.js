@@ -512,8 +512,102 @@
     });
   }
 
+  // ── API pubblica (usata dal compositore piadina) ────────────────────────────
+  // Aggiunge una voce personalizzata; compositori identici si sommano (stesso id).
+  window.AnitaCart = {
+    add: function (name, priceCents) {
+      addItem("piada:" + name, name, priceCents, false);
+      afterChange();
+    },
+    open: openModal,
+  };
+
   // ── Avvio ───────────────────────────────────────────────────────────────────
   function start() { refreshBuys(); updateFab(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
+})();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COMPOSITORE PIADINA — carne principale obbligatoria, extra sbloccati dopo,
+   formaggi/contorni liberi. Totale live → aggiunge una voce al carrello.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+  var form = document.querySelector("[data-piada]");
+  if (!form) return;
+
+  function fmt(c) { return "€\u00A0" + (c / 100).toFixed(2).replace(".", ","); }
+  function mainInput() { return form.querySelector('input[name="piada-main"]:checked'); }
+  function extraInputs() {
+    var g = form.querySelector('.piada__group[data-kind="extra"]');
+    return g ? Array.prototype.slice.call(g.querySelectorAll('input[type="checkbox"]')) : [];
+  }
+
+  function recompute() {
+    var main = mainInput();
+    var hasMain = !!main;
+    // sblocca/blocca la carne extra
+    extraInputs().forEach(function (i) {
+      i.disabled = !hasMain;
+      if (!hasMain) i.checked = false;
+    });
+    var extraGroup = form.querySelector('.piada__group[data-kind="extra"]');
+    if (extraGroup) extraGroup.classList.toggle("is-locked", !hasMain);
+
+    // totale
+    var total = 0;
+    if (main) total += parseInt(main.getAttribute("data-price"), 10) || 0;
+    form.querySelectorAll('input[type="checkbox"]:checked').forEach(function (i) {
+      total += parseInt(i.getAttribute("data-price"), 10) || 0;
+    });
+
+    var totEl = form.querySelector("[data-piada-tot]");
+    if (totEl) totEl.textContent = fmt(total);
+    var addBtn = form.querySelector("[data-piada-add]");
+    if (addBtn) addBtn.disabled = !hasMain;
+    var hint = form.querySelector("[data-piada-hint]");
+    if (hint) hint.style.display = hasMain ? "none" : "";
+    return total;
+  }
+
+  function buildName() {
+    var parts = [];
+    form.querySelectorAll(".piada__group").forEach(function (g) {
+      var title = (g.querySelector(".mgroup__title") || {}).textContent || "";
+      title = title.replace(/obbligatoria/i, "").trim();
+      var sel;
+      if (g.getAttribute("data-kind") === "main") {
+        var m = g.querySelector('input:checked');
+        sel = m ? [m.getAttribute("data-name")] : [];
+      } else {
+        sel = Array.prototype.slice.call(g.querySelectorAll('input:checked'))
+          .map(function (i) { return i.getAttribute("data-name"); });
+      }
+      if (sel.length) parts.push(title + ": " + sel.join(", "));
+    });
+    return "Piadina — " + parts.join(" · ");
+  }
+
+  form.addEventListener("change", recompute);
+
+  var addBtn = form.querySelector("[data-piada-add]");
+  if (addBtn) addBtn.addEventListener("click", function () {
+    var main = mainInput();
+    if (!main) return;
+    var total = recompute();
+    var name = buildName();
+    if (window.AnitaCart && typeof window.AnitaCart.add === "function") {
+      window.AnitaCart.add(name, total);
+    }
+    // reset e conferma breve
+    form.reset();
+    recompute();
+    var old = addBtn.textContent;
+    addBtn.textContent = "Aggiunta al carrello ✓";
+    addBtn.disabled = true;
+    setTimeout(function () { addBtn.textContent = old; recompute(); }, 1600);
+  });
+
+  recompute();
 })();

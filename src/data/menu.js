@@ -155,29 +155,13 @@ export const menu = {
           items: [
             it("Nuggets di pollo 8pz", 6.0, { tags: ["novita"], allergens: ["g"] }),
             it("Alette di pollo 5pz", 6.0, { tags: ["novita"] }),
-            it("Gamberi in tempura 3pz", 9.0, {
-              desc: "con salsa teriyaki",
-              tags: ["novita"],
-              allergens: ["g", "c", "s"],
-            }),
-            it("Carpaccio di black angus", 16.0, {
-              desc: "servito in base alla stagionalità dei prodotti",
-              tags: ["novita"],
-            }),
             it("Banditos 5pz", 7.0, {
               desc: "con panatura di Panko Viola",
               tags: ["novita"],
               allergens: ["g"],
             }),
-            it("Bao bun 3pz", 10.0, {
-              desc: "pulled pork homemade, cheddar, cipolla croccante e peperoncino in fili",
-              tags: ["novita", "piccante"],
-              allergens: ["g", "l"],
-            }),
             it("Pop corn di pollo", 5.0, { tags: ["novita"], allergens: ["g"] }),
             it("Emmental Gold 3pz", 6.0, { tags: ["novita"], allergens: ["g", "l"] }),
-            it("Arrosticini 4pz", 7.5, { desc: "carne bovina", tags: ["novita"] }),
-            it("Patatine cross", 5.0),
             it("Tagliere Anita", 25.0, {
               desc: "consigliato per due persone",
               tags: ["special"],
@@ -208,8 +192,8 @@ export const menu = {
           title: "Primi — menu del giorno",
           note: "Servizio di tavola calda con menu del giorno: due primi a scelta, secondo e contorni.",
           items: [
-            it("Bauletti ripieni", 13.0, {
-              desc: "con porcini e taleggio su crema di porcini e salvia croccante",
+            it("Gnocchi alla sorrentina", 12.0, {
+              desc: "pomodoro, fior di latte e basilico",
               tags: ["novita"],
               allergens: ["g", "l"],
             }),
@@ -227,15 +211,6 @@ export const menu = {
               desc: "circa 300gr — consigliata con rucola, scaglie di Parmigiano e pomodorini datterino",
               tags: ["special"],
               allergens: ["l"],
-            }),
-            it("Guancialino di manzo", 15.0, {
-              desc: "su crema di patate arrosto e rosmarino",
-              tags: ["novita"],
-            }),
-            it("Baccalà pastellato", 13.0, {
-              desc: "con scarole e polvere di olive nere",
-              tags: ["novita"],
-              allergens: ["g", "p"],
             }),
             it("Cotoletta di pollo", 6.0, {
               desc: "in panatura croccante homemade",
@@ -289,6 +264,68 @@ export const menu = {
           note: "Per altri dessert chiedi in sala.",
           items: [
             it("Crostiera", 6.0, { tags: ["crostiera"], allergens: ["g", "l", "u", "n"] }),
+          ],
+        },
+      ],
+    },
+
+    // ── COMPONI LA TUA PIADINA (compositore interattivo) ─────────────────────
+    // kind: "main" = scelta singola obbligatoria · "extra" = sbloccata dopo la
+    // carne principale · "add" = aggiunte libere. Prezzi in euro.
+    {
+      id: "piadina",
+      title: "Componi la tua piadina",
+      theme: "forest",
+      groups: [
+        {
+          title: "Carne principale",
+          kind: "main",
+          note: "Scegli una carne principale (obbligatoria).",
+          items: [
+            it("Porchetta", 5.5),
+            it("Hamburger di manzetta 200g", 6.5),
+            it("Würstel", 5.0),
+            it("Salsiccia", 5.0),
+            it("Petto di pollo", 5.0),
+            it("Cotoletta homemade", 6.0),
+            it("Prosciutto cotto", 5.0),
+            it("Prosciutto crudo", 5.0),
+            it("Salame Napoli", 5.0),
+            it("Capocollo", 5.0),
+          ],
+        },
+        {
+          title: "Carne extra",
+          kind: "extra",
+          note: "Disponibile dopo aver scelto la carne principale.",
+          items: [
+            it("Prosciutto cotto", 1.0),
+            it("Prosciutto crudo", 1.0),
+            it("Salame Napoli", 1.0),
+            it("Capocollo", 1.5),
+          ],
+        },
+        {
+          title: "Formaggi",
+          kind: "add",
+          items: [
+            it("Sottiletta", 0.5),
+            it("Cheddar", 0.5),
+            it("Provola", 1.0),
+            it("Fior di latte", 1.0),
+          ],
+        },
+        {
+          title: "Contorni",
+          kind: "add",
+          items: [
+            it("Patatine fritte", 1.0),
+            it("Patate al forno", 1.0),
+            it("Zucchine arrostite", 2.0),
+            it("Melanzane grigliate", 2.0),
+            it("Melanzane a funghetto", 2.0),
+            it("Zucchine alla scapece", 2.0),
+            it("Carote", 1.0),
           ],
         },
       ],

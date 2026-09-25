@@ -26,6 +26,8 @@ const centsOf = (item) => Math.round(Number(item.price) * 100);
 function deliverableOf(item, sectionId, groupTitle) {
   if (typeof item.deliverable === "boolean") return item.deliverable;
   if (item.available === false) return false;
+  if (item.price == null) return false; // voci senza prezzo (es. ingredienti piadina)
+  if (sectionId === "piadina") return false;
   const g = (groupTitle || "").toLowerCase();
   if (sectionId === "cocktail") return g.includes("analcolic");
   if (sectionId === "vini" || sectionId === "distillati") return false;
@@ -294,13 +296,16 @@ function itemRow(item, ctx = {}) {
       ${allergenLine(item.allergens)}
     </div>
     <div class="mitem__side">
-      <div class="mitem__price">${priceOf(item)}</div>
+      ${item.price == null ? "" : `<div class="mitem__price">${priceOf(item)}</div>`}
       ${buyControl(item, ctx.sectionId, ctx.groupTitle, false)}
     </div>
   </div>`;
 }
 function compactRow(item, ctx = {}) {
   if (item.available === false) return "";
+  if (item.price == null) {
+    return `<div class="row row--noprice"><span class="nm">${esc(item.name)}${badges(item.tags)}</span></div>`;
+  }
   const buy = buyControl(item, ctx.sectionId, ctx.groupTitle, true);
   return `<div class="row"><span class="nm">${esc(item.name)}${badges(item.tags)}</span><span class="pr">${priceOf(item)}${buy}</span></div>`;
 }
@@ -318,7 +323,42 @@ function groupHtml(g, sectionId) {
     ${g.items.map((i) => itemRow(i, ctx)).join("")}
   </div>`;
 }
+function piadinaOption(item, kind) {
+  const cents = centsOf(item);
+  const input =
+    kind === "main"
+      ? `<input type="radio" name="piada-main" data-name="${esc(item.name)}" data-price="${cents}">`
+      : `<input type="checkbox" data-name="${esc(item.name)}" data-price="${cents}"${kind === "extra" ? " disabled" : ""}>`;
+  return `<label class="opt">${input}<span class="opt__nm">${esc(item.name)}</span><span class="opt__pr">${money(item.price)}</span></label>`;
+}
+function piadinaSection(sec) {
+  const groups = sec.groups
+    .map((g) => {
+      const note = g.note ? `<p class="mgroup__note">${esc(g.note)}</p>` : "";
+      const req = g.kind === "main" ? ` <span class="req">obbligatoria</span>` : "";
+      return `<div class="piada__group" data-kind="${g.kind}">
+        <h3 class="mgroup__title">${esc(g.title)}${req}</h3>${note}
+        <div class="piada__opts">${g.items.map((i) => piadinaOption(i, g.kind)).join("")}</div>
+      </div>`;
+    })
+    .join("");
+  return `<section id="${sec.id}" class="msec msec--${sec.theme}">
+    <div class="wrap">
+      <div class="msec__title">${I.leaf}<h2>${esc(sec.title)}</h2></div>
+      <div class="msec__rule"></div>
+      <form class="piada" data-piada onsubmit="return false">
+        ${groups}
+        <div class="piada__bar">
+          <div class="piada__tot"><span>Totale</span><strong data-piada-tot>${money(0)}</strong></div>
+          <button type="button" class="btn btn-primary" data-piada-add disabled>Aggiungi all'ordine</button>
+          <p class="piada__hint" data-piada-hint>Scegli prima una carne principale.</p>
+        </div>
+      </form>
+    </div>
+  </section>`;
+}
 function sectionHtml(sec) {
+  if (sec.id === "piadina") return piadinaSection(sec);
   return `<section id="${sec.id}" class="msec msec--${sec.theme}">
     <div class="wrap">
       <div class="msec__title">${I.leaf}<h2>${esc(sec.title)}</h2></div>
