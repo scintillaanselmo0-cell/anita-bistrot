@@ -645,3 +645,5 @@ body.noscroll { overflow: hidden; }
 @media (min-width: 720px) {
   .piada__opts { grid-template-columns: 1fr 1fr; }
 }
+
+.band--piadina { background: var(--wine); color: var(--cream); }

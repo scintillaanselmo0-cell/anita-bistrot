@@ -431,6 +431,19 @@ function pageHome() {
       </div>
     </section>
 
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="band band--piadina">
+          <span class="leafcorner">${bigLeaf(120)}</span>
+          <h2>Componi la tua piadina</h2>
+          <p>Scegli la carne principale, aggiungi formaggi e contorni e crea la piadina perfetta per te: la componi tu, la prepariamo noi.</p>
+          <div class="btnrow">
+            <a class="btn btn-primary" href="menu.html#piadina">Inizia a comporre</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" style="padding-top:0" id="eventi">
       <div class="wrap">
         <div class="band band--crostiera">
