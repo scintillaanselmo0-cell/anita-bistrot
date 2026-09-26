@@ -208,6 +208,8 @@ export const EN = {
   "Disponibile dopo aver scelto la carne principale.": "Available after choosing the main meat.",
   "Formaggi": "Cheeses",
   "Contorni": "Sides",
+  "Salse": "Sauces",
+  "In bustina — 0,10€ a salsa.": "In sachets — €0.10 per sauce.",
   "Totale": "Total",
   "Scegli prima una carne principale.": "Choose a main meat first.",
   "Scegli prima cosa comporre.": "Choose what to build first.",

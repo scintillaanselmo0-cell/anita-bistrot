@@ -313,6 +313,7 @@ export const menu = {
             it("Prosciutto crudo", 1.0),
             it("Salame Napoli", 1.0),
             it("Capocollo", 1.5),
+            it("Bacon", 1.0),
           ],
         },
         {
@@ -336,6 +337,18 @@ export const menu = {
             it("Melanzane a funghetto", 2.0),
             it("Zucchine alla scapece", 2.0),
             it("Carote", 1.0),
+            it("Insalata", 1.0),
+            it("Pomodori", 2.0),
+          ],
+        },
+        {
+          title: "Salse",
+          kind: "add",
+          note: "In bustina — 0,10€ a salsa.",
+          items: [
+            it("Maionese", 0.1),
+            it("Ketchup", 0.1),
+            it("Salsa bbq", 0.1),
           ],
         },
       ],
