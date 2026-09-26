@@ -274,9 +274,19 @@ export const menu = {
     // carne principale · "add" = aggiunte libere. Prezzi in euro.
     {
       id: "piadina",
-      title: "Componi la tua piadina",
+      title: "Componi",
       theme: "forest",
       groups: [
+        {
+          title: "Scegli cosa comporre",
+          kind: "base",
+          note: "Scegli il formato, poi aggiungi gli ingredienti.",
+          items: [
+            it("Piadina"),
+            it("Club Sandwich"),
+            it("Saltimbocca"),
+          ],
+        },
         {
           title: "Carne principale",
           kind: "main",
