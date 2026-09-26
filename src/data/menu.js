@@ -168,7 +168,7 @@ export const menu = {
               allergens: ["l", "g"],
             }),
             it("Patatine stick", 5.0),
-            it("Chicken duble stick 3pz", 7.5, { allergens: ["g"] }),
+            it("Chicken Double stick 3pz", 7.5, { allergens: ["g"] }),
             it("Percorso di bruschette 3pz", 7.5, { allergens: ["g"] }),
           ],
         },
