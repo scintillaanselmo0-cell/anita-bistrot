@@ -1,4 +1,122 @@
 /* ═══════════════════════════════════════════════════════════════════════════
+   ANITA BISTROT — i18n (toggle IT/EN)
+   Scambia i testi statici marcati con data-en, traduce le stringhe costruite a
+   runtime (pill, carrello, compositore) e ricorda la scelta in localStorage.
+   ═══════════════════════════════════════════════════════════════════════════ */
+window.AnitaI18N = (function () {
+  "use strict";
+  var KEY = "anita_lang";
+  var lang = "it";
+  try { if (localStorage.getItem(KEY) === "en") lang = "en"; } catch (e) {}
+
+  // Stringhe costruite via JavaScript (le pagine statiche usano data-en).
+  var RT = {
+    "Aperto ora": "Open now",
+    "chiude alle": "closes at",
+    "Chiuso": "Closed",
+    "apre": "opens",
+    "alle": "at",
+    "Apri il carrello": "Open cart",
+    "Il tuo ordine": "Your order",
+    "Il carrello è vuoto.": "Your cart is empty.",
+    "Aggiungi qualcosa dal menu per ordinare a domicilio.": "Add something from the menu to order delivery.",
+    "Vai al menu": "Go to menu",
+    "Subtotale": "Subtotal",
+    "Consegna": "Delivery",
+    "Consegna gratis 🎉": "Free delivery 🎉",
+    "Totale": "Total",
+    "Procedi": "Continue",
+    "Ordine minimo": "Minimum order",
+    "aggiungi": "add",
+    "per procedere.": "to continue.",
+    "Completa l'ordine": "Complete your order",
+    "Nome e cognome *": "Full name *",
+    "Telefono *": "Phone *",
+    "Indirizzo (via e civico) *": "Address (street & number) *",
+    "Interno / citofono / piano": "Flat / buzzer / floor",
+    "Note (allergie, citofono rotto…)": "Notes (allergies, broken buzzer…)",
+    "Note (indica qui le varianti)": "Notes (list your choices here)",
+    "Indietro": "Back",
+    "Invia ordine su WhatsApp": "Send order on WhatsApp",
+    "Ci siamo quasi!": "Almost there!",
+    "Apri WhatsApp e invia l'ordine": "Open WhatsApp and send the order",
+    "Apri WhatsApp e premi invio per inviarci l'ordine: lo riceviamo direttamente in chat e ti confermiamo tutto lì. 💜":
+      "Open WhatsApp and hit send to place your order: it reaches us directly in chat and we'll confirm everything there. 💜",
+    "Hai prodotti a prezzo variabile (es. Club Sandwich): il totale è il prezzo di partenza. Scrivi nelle note come li vuoi — ti confermiamo il prezzo finale in chat.":
+      "You have variable-price items (e.g. Club Sandwich): the total is the starting price. Write in the notes how you'd like them — we'll confirm the final price in chat.",
+    "Gratis": "Free",
+    "Aggiungi": "Add",
+    "Aggiungi all'ordine": "Add to order",
+    "Aggiunta al carrello ✓": "Added to cart ✓",
+    "Scegli prima cosa comporre.": "Choose what to build first.",
+    "Scegli una carne principale.": "Choose a main meat first.",
+    "Consegniamo a Pomigliano d'Arco e zone limitrofe. Fuori zona, scrivici su WhatsApp.":
+      "We deliver in Pomigliano d'Arco and nearby areas. Outside the zone, message us on WhatsApp.",
+  };
+  var DAYS = {
+    "domenica": "Sunday", "lunedì": "Monday", "martedì": "Tuesday", "mercoledì": "Wednesday",
+    "giovedì": "Thursday", "venerdì": "Friday", "sabato": "Saturday",
+  };
+
+  var cbs = [];
+  function t(s) { return lang === "en" ? (RT[s] || s) : s; }
+  function day(s) { return lang === "en" ? (DAYS[String(s).toLowerCase()] || s) : s; }
+
+  // Scambia i nodi statici marcati con data-en.
+  function swapStatic() {
+    var els = document.querySelectorAll("[data-en]");
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (!el.hasAttribute("data-it0")) el.setAttribute("data-it0", el.textContent);
+      el.textContent = lang === "en" ? el.getAttribute("data-en") : el.getAttribute("data-it0");
+    }
+  }
+  // Traduce i nodi di testo di un sottoalbero costruito a runtime (solo → EN).
+  function localize(root) {
+    if (lang !== "en" || !root) return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var n, hits = [];
+    while ((n = w.nextNode())) {
+      var raw = n.nodeValue, key = raw.trim();
+      if (key && RT[key]) hits.push([n, raw.replace(key, RT[key])]);
+    }
+    hits.forEach(function (h) { h[0].nodeValue = h[1]; });
+  }
+  function updateToggles() {
+    var b = document.querySelectorAll("[data-langtoggle]");
+    for (var i = 0; i < b.length; i++) {
+      b[i].textContent = lang === "en" ? "IT" : "EN";
+      b[i].setAttribute("aria-label", lang === "en" ? "Passa all'italiano" : "Switch to English");
+    }
+  }
+  function apply() {
+    try { document.documentElement.lang = lang; } catch (e) {}
+    swapStatic(); updateToggles();
+    cbs.forEach(function (f) { try { f(); } catch (e) {} });
+  }
+  function set(l) {
+    lang = l === "en" ? "en" : "it";
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+    apply();
+  }
+  function toggle() { set(lang === "en" ? "it" : "en"); }
+
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest("[data-langtoggle]") : null;
+    if (b) toggle();
+  });
+  function init() { apply(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+
+  return {
+    get lang() { return lang; },
+    t: t, day: day, localize: localize, onChange: function (f) { cbs.push(f); },
+    set: set, toggle: toggle,
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════════
    ANITA BISTROT — progressive enhancement
    Nessuna dipendenza. Se il JS è disattivato, il sito resta pienamente usabile:
    menu, telefono e orari (pagina Contatti) sono già HTML statico.
@@ -121,22 +239,23 @@
     pills.forEach(function (el) {
       el.classList.remove("is-open", "is-closed");
       var dot = '<span class="dot" aria-hidden="true"></span>';
+      var T = window.AnitaI18N;
       var label;
-      if (!st) { label = "Vedi orari di apertura"; }
+      if (!st) { label = T.t("Vedi orari di apertura"); }
       else if (st.open) {
         el.classList.add("is-open");
-        label = "Aperto ora" + (st.closeMin != null ? " · chiude alle " + fmt(st.closeMin) : "");
+        label = T.t("Aperto ora") + (st.closeMin != null ? " · " + T.t("chiude alle") + " " + fmt(st.closeMin) : "");
       } else {
         el.classList.add("is-closed");
         var when = "";
         if (st.openMin != null) {
           var now = nowInRome();
           var dayTxt = (st.openDay != null && st.openDay !== now.day && HOURS.dayNames)
-            ? HOURS.dayNames[st.openDay].toLowerCase() + " "
+            ? T.day(HOURS.dayNames[st.openDay]).toLowerCase() + " "
             : "";
-          when = " · apre " + dayTxt + "alle " + fmt(st.openMin);
+          when = " · " + T.t("apre") + " " + dayTxt + T.t("alle") + " " + fmt(st.openMin);
         }
-        label = "Chiuso" + when;
+        label = T.t("Chiuso") + when;
       }
       el.innerHTML = dot + "<span>" + label + "</span>";
     });
@@ -190,6 +309,7 @@
     renderPills();
     markToday();
     menuTabs();
+    if (window.AnitaI18N) window.AnitaI18N.onChange(function () { renderPills(); });
     // aggiorna la pill ogni minuto
     setInterval(function () { renderPills(); markToday(); }, 60000);
   }
@@ -256,6 +376,7 @@
     var q = qtyOf(id);
     if (q <= 0) {
       var label = el.getAttribute("data-label") || "Aggiungi";
+      if (window.AnitaI18N) label = window.AnitaI18N.t(label);
       el.innerHTML = '<button class="addbtn" type="button">' + label + '</button>';
     } else {
       el.innerHTML =
@@ -293,7 +414,7 @@
     fab = document.createElement("button");
     fab.type = "button";
     fab.className = "cartfab";
-    fab.setAttribute("aria-label", "Apri il carrello");
+    fab.setAttribute("aria-label", window.AnitaI18N ? window.AnitaI18N.t("Apri il carrello") : "Apri il carrello");
     fab.addEventListener("click", openModal);
     document.body.appendChild(fab);
   }
@@ -336,9 +457,10 @@
   }
 
   function renderView() {
-    if (view === "checkout") return renderCheckout();
-    if (view === "confirm") return renderConfirm();
-    return renderCart();
+    if (view === "checkout") renderCheckout();
+    else if (view === "confirm") renderConfirm();
+    else renderCart();
+    if (window.AnitaI18N) window.AnitaI18N.localize(panel);
   }
 
   // Vista 1 — carrello
@@ -365,8 +487,11 @@
     }).join("");
 
     var below = CFG.minCents > 0 && sub < CFG.minCents;
+    var _T = window.AnitaI18N;
     var notice = below
-      ? '<p class="cart-min">Ordine minimo ' + fmt(CFG.minCents) + ' — aggiungi ' + fmt(CFG.minCents - sub) + ' per procedere.</p>'
+      ? '<p class="cart-min">' + (_T ? _T.t("Ordine minimo") : "Ordine minimo") + ' ' + fmt(CFG.minCents) +
+        ' — ' + (_T ? _T.t("aggiungi") : "aggiungi") + ' ' + fmt(CFG.minCents - sub) + ' ' +
+        (_T ? _T.t("per procedere.") : "per procedere.") + '</p>'
       : "";
     var feeRow = fee === 0 && sub > 0
       ? '<span>Consegna gratis 🎉</span>'
@@ -523,7 +648,14 @@
   };
 
   // ── Avvio ───────────────────────────────────────────────────────────────────
-  function start() { refreshBuys(); updateFab(); }
+  function start() {
+    refreshBuys(); updateFab();
+    if (window.AnitaI18N) window.AnitaI18N.onChange(function () {
+      refreshBuys();
+      if (fab) fab.setAttribute("aria-label", window.AnitaI18N.t("Apri il carrello"));
+      if (modal && modal.classList.contains("is-open")) renderView();
+    });
+  }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
 })();
@@ -536,26 +668,39 @@
   "use strict";
   var form = document.querySelector("[data-piada]");
   if (!form) return;
+  var _t = function (s) { return window.AnitaI18N ? window.AnitaI18N.t(s) : s; };
 
   function fmt(c) { return "€\u00A0" + (c / 100).toFixed(2).replace(".", ","); }
+  function baseInput() { return form.querySelector('input[name="piada-base"]:checked'); }
   function mainInput() { return form.querySelector('input[name="piada-main"]:checked'); }
-  function extraInputs() {
-    var g = form.querySelector('.piada__group[data-kind="extra"]');
-    return g ? Array.prototype.slice.call(g.querySelectorAll('input[type="checkbox"]')) : [];
-  }
 
   function recompute() {
+    var hasBase = !!baseInput();
+    // finché non scegli il formato, carne principale/formaggi/contorni sono bloccati
+    ["main", "add"].forEach(function (kind) {
+      form.querySelectorAll('.piada__group[data-kind="' + kind + '"]').forEach(function (g) {
+        g.classList.toggle("is-locked", !hasBase);
+        g.querySelectorAll("input").forEach(function (i) {
+          i.disabled = !hasBase;
+          if (!hasBase) i.checked = false;
+        });
+      });
+    });
+
     var main = mainInput();
     var hasMain = !!main;
-    // sblocca/blocca la carne extra
-    extraInputs().forEach(function (i) {
-      i.disabled = !hasMain;
-      if (!hasMain) i.checked = false;
-    });
+    // la carne extra si sblocca dopo il formato E la carne principale
+    var extraOn = hasBase && hasMain;
     var extraGroup = form.querySelector('.piada__group[data-kind="extra"]');
-    if (extraGroup) extraGroup.classList.toggle("is-locked", !hasMain);
+    if (extraGroup) {
+      extraGroup.classList.toggle("is-locked", !extraOn);
+      extraGroup.querySelectorAll("input").forEach(function (i) {
+        i.disabled = !extraOn;
+        if (!extraOn) i.checked = false;
+      });
+    }
 
-    // totale
+    // totale (solo ingredienti; il formato non ha prezzo)
     var total = 0;
     if (main) total += parseInt(main.getAttribute("data-price"), 10) || 0;
     form.querySelectorAll('input[type="checkbox"]:checked').forEach(function (i) {
@@ -565,28 +710,39 @@
     var totEl = form.querySelector("[data-piada-tot]");
     if (totEl) totEl.textContent = fmt(total);
     var addBtn = form.querySelector("[data-piada-add]");
-    if (addBtn) addBtn.disabled = !hasMain;
+    if (addBtn) {
+      addBtn.disabled = !(hasBase && hasMain);
+      if (!addBtn.getAttribute("data-busy")) addBtn.textContent = _t("Aggiungi all'ordine");
+    }
     var hint = form.querySelector("[data-piada-hint]");
-    if (hint) hint.style.display = hasMain ? "none" : "";
+    if (hint) {
+      if (!hasBase) { hint.textContent = _t("Scegli prima cosa comporre."); hint.style.display = ""; }
+      else if (!hasMain) { hint.textContent = _t("Scegli una carne principale."); hint.style.display = ""; }
+      else { hint.style.display = "none"; }
+    }
     return total;
   }
 
   function buildName() {
+    var base = baseInput();
+    var baseName = base ? base.getAttribute("data-name") : "Piadina";
     var parts = [];
     form.querySelectorAll(".piada__group").forEach(function (g) {
+      var kind = g.getAttribute("data-kind");
+      if (kind === "base") return; // il formato è il prefisso, non una parte
       var title = (g.querySelector(".mgroup__title") || {}).textContent || "";
-      title = title.replace(/obbligatoria/i, "").trim();
+      title = title.replace(/obbligatoria|required/i, "").trim();
       var sel;
-      if (g.getAttribute("data-kind") === "main") {
-        var m = g.querySelector('input:checked');
+      if (kind === "main") {
+        var m = g.querySelector("input:checked");
         sel = m ? [m.getAttribute("data-name")] : [];
       } else {
-        sel = Array.prototype.slice.call(g.querySelectorAll('input:checked'))
+        sel = Array.prototype.slice.call(g.querySelectorAll("input:checked"))
           .map(function (i) { return i.getAttribute("data-name"); });
       }
       if (sel.length) parts.push(title + ": " + sel.join(", "));
     });
-    return "Piadina — " + parts.join(" · ");
+    return baseName + " — " + parts.join(" · ");
   }
 
   form.addEventListener("change", recompute);
@@ -603,11 +759,12 @@
     // reset e conferma breve
     form.reset();
     recompute();
-    var old = addBtn.textContent;
-    addBtn.textContent = "Aggiunta al carrello ✓";
+    addBtn.setAttribute("data-busy", "1");
+    addBtn.textContent = _t("Aggiunta al carrello ✓");
     addBtn.disabled = true;
-    setTimeout(function () { addBtn.textContent = old; recompute(); }, 1600);
+    setTimeout(function () { addBtn.removeAttribute("data-busy"); recompute(); }, 1600);
   });
 
+  if (window.AnitaI18N) window.AnitaI18N.onChange(recompute);
   recompute();
 })();

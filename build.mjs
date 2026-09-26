@@ -9,6 +9,7 @@ import { dirname, join } from "node:path";
 import { site } from "./src/data/site.js";
 import { hours } from "./src/data/hours.js";
 import { menu } from "./src/data/menu.js";
+import { EN } from "./src/data/i18n.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC = join(__dirname, "src");
@@ -20,6 +21,27 @@ const esc = (s = "") =>
 const money = (n) => "€\u00A0" + Number(n).toFixed(2).replace(".", ",");
 const priceOf = (item) => (item.priceFrom ? "da " : "") + money(item.price);
 const centsOf = (item) => Math.round(Number(item.price) * 100);
+
+// ── i18n: avvolge automaticamente i testi tradotti in <span data-en> ─────────
+const escAttr = (s = "") => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Per ogni voce del dizionario, avvolge il testo ITALIANO che compare come nodo
+// completo (tra > e <) in <span data-en="EN">IT</span>. Al toggle lo script scambia.
+function annotateEN(html) {
+  for (const key in EN) {
+    const en = EN[key];
+    if (en == null) continue;
+    const variants = key === esc(key) ? [key] : [key, esc(key)];
+    for (const v of variants) {
+      const rgx = new RegExp(">(\\s*)(" + reEsc(v) + ")(\\s*)<", "g");
+      html = html.replace(
+        rgx,
+        (_m, pre, phrase, post) => `>${pre}<span data-en="${escAttr(en)}">${phrase}</span>${post}<`
+      );
+    }
+  }
+  return html;
+}
 
 // Cosa è ordinabile a domicilio. item.deliverable (true/false) ha sempre priorità.
 // Default: cibo/soft/dessert = sì; alcolici = no. Casi misti gestiti per gruppo.
@@ -137,6 +159,7 @@ function header(active) {
       ${link("contatti.html", "Contatti", "contact")}
     </nav>
     <a class="btn btn-primary nav__cta" href="${waHref}" target="_blank" rel="noopener">${I.wa} Prenota</a>
+    <button type="button" class="langtoggle" data-langtoggle aria-label="Switch to English">EN</button>
     <details class="nav__menu">
       <summary aria-label="Apri il menu di navigazione">${I.menuIcon}</summary>
       <div class="sheet">
@@ -324,6 +347,9 @@ function groupHtml(g, sectionId) {
   </div>`;
 }
 function piadinaOption(item, kind) {
+  if (kind === "base") {
+    return `<label class="opt opt--base"><input type="radio" name="piada-base" data-name="${esc(item.name)}"><span class="opt__nm">${esc(item.name)}</span></label>`;
+  }
   const cents = centsOf(item);
   const input =
     kind === "main"
@@ -435,8 +461,8 @@ function pageHome() {
       <div class="wrap">
         <div class="band band--piadina">
           <span class="leafcorner">${bigLeaf(120)}</span>
-          <h2>Componi la tua piadina</h2>
-          <p>Scegli la carne principale, aggiungi formaggi e contorni e crea la piadina perfetta per te: la componi tu, la prepariamo noi.</p>
+          <h2>Componi</h2>
+          <p>Scegli tra piadina, club sandwich o saltimbocca, poi aggiungi carne, formaggi e contorni: lo componi tu, lo prepariamo noi.</p>
           <div class="btnrow">
             <a class="btn btn-primary" href="menu.html#piadina">Inizia a comporre</a>
           </div>
@@ -838,11 +864,11 @@ function build() {
   cpSync(join(SRC, "assets", "crostiera"), join(OUT, "assets", "crostiera"), { recursive: true });
 
   // pagine
-  writeFileSync(join(OUT, "index.html"), pageHome());
-  writeFileSync(join(OUT, "menu.html"), pageMenu());
-  writeFileSync(join(OUT, "crostiera.html"), pageCrostiera());
-  writeFileSync(join(OUT, "chi-siamo.html"), pageAbout());
-  writeFileSync(join(OUT, "contatti.html"), pageContact());
+  writeFileSync(join(OUT, "index.html"), annotateEN(pageHome()));
+  writeFileSync(join(OUT, "menu.html"), annotateEN(pageMenu()));
+  writeFileSync(join(OUT, "crostiera.html"), annotateEN(pageCrostiera()));
+  writeFileSync(join(OUT, "chi-siamo.html"), annotateEN(pageAbout()));
+  writeFileSync(join(OUT, "contatti.html"), annotateEN(pageContact()));
 
   // seo
   writeFileSync(join(OUT, "robots.txt"), robots());
