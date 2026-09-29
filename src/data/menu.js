@@ -207,7 +207,7 @@ export const menu = {
         {
           title: "Secondi",
           items: [
-            it("Entrecôte di Angus Argentino", 21.0, {
+            it("Entrecôte di Angus Argentino", 24.0, {
               desc: "circa 300gr — consigliata con rucola, scaglie di Parmigiano e pomodorini datterino",
               tags: ["special"],
               allergens: ["l"],
