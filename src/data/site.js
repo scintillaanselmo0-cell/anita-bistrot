@@ -99,6 +99,35 @@ export const site = {
       desc:
         "Da Anita Bistrot gusti Crostiera, la crostata al limone della tradizione napoletana con veri Limoni di Sorrento. A fetta ogni giorno (€ 6) o intera su prenotazione (€ 38).",
     },
+    privacy: {
+      path: "privacy.html",
+      title: "Privacy e dati aziendali | Anita Bistrot",
+      desc:
+        "Informativa privacy e dati societari di Anita Bistrot (La Vesuviana Snack Srl). Come trattiamo i dati inviati tramite la prenotazione su WhatsApp.",
+    },
+  },
+
+  // ── DATI AZIENDALI / LEGALI ──────────────────────────────────────────────────
+  legal: {
+    company: "La Vesuviana Snack Srl",
+    addressLegal: "Via Massimo Troisi 1, Brusciano (NA), 80031",
+    vat: "08701411210",            // P.IVA
+    sdi: "MJ1OYNU",                // Codice univoco (SDI)
+    rea: "NA - 978274",            // Numero REA
+    capital: "€ 2.500,00 i.v.",    // capitale sociale versato
+    email: "aneateria@gmail.com",  // email di contatto pubblica
+    pec: "lavesuvianasnacksrl@pec.it",
+    phone: "3347727526",
+    dpo: "Cirella Giuseppe",       // titolare del trattamento dei dati
+  },
+
+  // ── CREDITO CREATORE DEL SITO ────────────────────────────────────────────────
+  creator: {
+    name: "SCINTILLA.DIGITAL.WEB",
+    instagram: "https://www.instagram.com/scintilla.digital.web",
+    email: "scintillaanselmo0@gmail.com",
+    whatsapp: "393762474257",
+    phoneDisplay: "376 247 4257",
   },
 
   // ── CROSTIERA (Anita è rivenditore ufficiale) ───────────────────────────────────

@@ -21,6 +21,37 @@ export const EN = {
   "Ordina su Glovo": "Order on Glovo",
   "Ordina su Alfonsino": "Order on Alfonsino",
   "Prenota su WhatsApp": "Book on WhatsApp",
+  "Privacy e dati aziendali": "Privacy & company info",
+  "Sito realizzato da": "Website by",
+
+  // Pagina Privacy
+  "Informazioni legali": "Legal information",
+  "Dati societari": "Company details",
+  "Ragione sociale": "Company name",
+  "Sede legale": "Registered office",
+  "Partita IVA": "VAT number",
+  "Numero REA": "REA number",
+  "Codice univoco (SDI)": "e-Invoicing code (SDI)",
+  "Capitale sociale": "Share capital",
+  "PEC": "Certified email (PEC)",
+  "Email": "Email",
+  "Telefono": "Phone",
+  "Informativa sulla privacy": "Privacy policy",
+  "La presente informativa è resa ai sensi del Regolamento UE 2016/679 (GDPR) a chi utilizza questo sito e, in particolare, la funzione di prenotazione e ordine tramite WhatsApp.":
+    "This notice is provided under EU Regulation 2016/679 (GDPR) to anyone using this site, and in particular the booking and ordering feature via WhatsApp.",
+  "Titolare del trattamento": "Data controller",
+  "Quali dati raccogliamo": "What data we collect",
+  "Quando componi una prenotazione o un ordine, il sito ti chiede nome, telefono, indirizzo di consegna ed eventuali note. Questi dati servono unicamente a compilare in automatico il messaggio WhatsApp che invii tu al locale.":
+    "When you put together a booking or an order, the site asks for your name, phone, delivery address and any notes. This data is used only to automatically fill in the WhatsApp message that you send to the venue.",
+  "Come vengono trattati": "How it is processed",
+  "Finalità e base giuridica": "Purpose and legal basis",
+  "I dati sono trattati per dare seguito alla tua richiesta di prenotazione o ordine (esecuzione di misure precontrattuali su tua richiesta). Non c'è profilazione, non vendiamo i dati a terzi e non li usiamo per marketing.":
+    "Data is processed to handle your booking or order request (pre-contractual steps taken at your request). There is no profiling, we do not sell data to third parties and we do not use it for marketing.",
+  "Cookie e tecnologie simili": "Cookies and similar technologies",
+  "Il sito non usa cookie di profilazione o di tracciamento pubblicitario. Utilizza solo l'archiviazione locale del browser (localStorage) per ricordare il carrello e la lingua scelta: sono dati tecnici che restano sul tuo dispositivo e non ci vengono trasmessi.":
+    "The site does not use profiling or advertising tracking cookies. It only uses the browser's local storage (localStorage) to remember your cart and chosen language: this is technical data that stays on your device and is not sent to us.",
+  "I tuoi diritti": "Your rights",
+  "Torna alla home": "Back to home",
   "Lasciaci una recensione su Google": "Leave us a Google review",
   "Trovaci su Google Maps": "Find us on Google Maps",
   "Piccolo bistrot, grandi emozioni. Colazione, aperitivo, cena e cocktail nel cuore di Pomigliano d'Arco.":

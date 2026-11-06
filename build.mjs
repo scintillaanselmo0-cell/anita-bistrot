@@ -92,6 +92,7 @@ const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${map
 const I = {
   leaf: `<svg class="leaf" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 3s-9-1-14 4C1 12 3 20 3 20s1-6 5-10c3-3 8-4 8-4s-5 2-8 6c-2 2.5-3 6-3 6s7 1 12-4c4-4 3-11 3-11z"/></svg>`,
   phone: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.3 1z"/></svg>`,
+  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>`,
   wa: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2zm5.6 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-3.2-.9-2.7-1.1-4.4-3.9-4.5-4.1-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.4-.3.6-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2 .9.6 1.3.8 1.6.9.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.7.8c.5.2.5.5.5.7z"/></svg>`,
   ig: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.9c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2.1 15.2 2.1 12s0-3.6.1-4.9C2.3 3.9 3.9 2.3 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.1A6.7 6.7 0 1 0 18.7 12 6.7 6.7 0 0 0 12 5.3zm0 11A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.3a1.6 1.6 0 1 1-1.6-1.6 1.6 1.6 0 0 1 1.6 1.6z"/></svg>`,
   fb: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`,
@@ -205,14 +206,31 @@ function footer() {
       <div class="footer__links">
         <a href="${directionsHref}" target="_blank" rel="noopener">${esc(addrLine)}</a>
         <a href="${telHref}">${esc(site.phoneDisplay)}</a>
+        <a href="mailto:${esc(site.legal.email)}">${esc(site.legal.email)}</a>
         <a href="${waHref}" target="_blank" rel="noopener">Prenota su WhatsApp</a>
+        <a href="privacy.html">Privacy e dati aziendali</a>
         ${review}
       </div>
     </div>
   </div>
+
+  <div class="wrap footer__legal">
+    <p>${esc(site.legal.company)} · Sede legale: ${esc(site.legal.addressLegal)} · P.IVA ${esc(site.legal.vat)} · REA ${esc(site.legal.rea)} · Cod. SDI ${esc(site.legal.sdi)} · Capitale sociale ${esc(site.legal.capital)}</p>
+    <p>PEC: ${esc(site.legal.pec)} · Email: <a href="mailto:${esc(site.legal.email)}">${esc(site.legal.email)}</a> · Tel: <a href="tel:+39${esc(site.legal.phone)}">${esc(site.legal.phone)}</a></p>
+  </div>
+
+  <div class="wrap footer__credit">
+    <span>Sito realizzato da <strong>${esc(site.creator.name)}</strong></span>
+    <span class="footer__credit-ico">
+      <a href="${esc(site.creator.instagram)}" target="_blank" rel="noopener" aria-label="Instagram ${esc(site.creator.name)}">${I.ig}</a>
+      <a href="mailto:${esc(site.creator.email)}" aria-label="Email ${esc(site.creator.name)}">${I.mail}</a>
+      <a href="https://wa.me/${esc(site.creator.whatsapp)}" target="_blank" rel="noopener" aria-label="WhatsApp ${esc(site.creator.name)}">${I.wa}</a>
+    </span>
+  </div>
+
   <div class="wrap footer__meta">
-    <span>© ${new Date().getFullYear()} Anita Bistrot · P.IVA <span title="Inserire la partita IVA">—</span></span>
-    <span>Via Passariello 60 · Pomigliano d'Arco (NA)</span>
+    <span>© ${new Date().getFullYear()} ${esc(site.name)} · ${esc(site.legal.company)} · P.IVA ${esc(site.legal.vat)}</span>
+    <span>${esc(addrLine)}</span>
   </div>
 </footer>`;
 }
@@ -825,6 +843,68 @@ function pageCrostiera() {
   );
 }
 
+function pagePrivacy() {
+  const L = site.legal;
+  const row = (label, value) => `<tr><th>${label}</th><td>${esc(value)}</td></tr>`;
+  return (
+    head("privacy") +
+    header("") +
+    `<main>
+    <section class="contact-hero">
+      <div class="wrap">
+        <span class="eyebrow" style="color:var(--lime)">${I.leaf} Informazioni legali</span>
+        <h1>Privacy e dati aziendali</h1>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap legal-doc">
+        <h2>Dati societari</h2>
+        <table class="legal-table"><tbody>
+          ${row("Ragione sociale", L.company)}
+          ${row("Sede legale", L.addressLegal)}
+          ${row("Partita IVA", L.vat)}
+          ${row("Numero REA", L.rea)}
+          ${row("Codice univoco (SDI)", L.sdi)}
+          ${row("Capitale sociale", L.capital)}
+          ${row("PEC", L.pec)}
+          ${row("Email", L.email)}
+          ${row("Telefono", L.phone)}
+        </tbody></table>
+
+        <h2>Informativa sulla privacy</h2>
+        <p>La presente informativa è resa ai sensi del Regolamento UE 2016/679 (GDPR) a chi utilizza questo sito e, in particolare, la funzione di prenotazione e ordine tramite WhatsApp.</p>
+
+        <h3>Titolare del trattamento</h3>
+        <p>Il Titolare del trattamento dei dati è <strong>${esc(L.dpo)}</strong>, in qualità di legale rappresentante di ${esc(L.company)}, con sede legale in ${esc(L.addressLegal)}. Per qualsiasi richiesta puoi scrivere a <a href="mailto:${esc(L.email)}">${esc(L.email)}</a> o alla PEC ${esc(L.pec)}.</p>
+
+        <h3>Quali dati raccogliamo</h3>
+        <p>Quando componi una prenotazione o un ordine, il sito ti chiede nome, telefono, indirizzo di consegna ed eventuali note. Questi dati servono unicamente a compilare in automatico il messaggio WhatsApp che invii tu al locale.</p>
+
+        <h3>Come vengono trattati</h3>
+        <p>Il sito è statico e non ha un server o un database proprio: <strong>i dati che inserisci non vengono salvati né conservati dal sito</strong>. Restano solo sul tuo dispositivo il tempo necessario a preparare il messaggio e vengono trasmessi esclusivamente tramite WhatsApp quando sei tu a inviarlo. La conversazione viaggia poi sui sistemi di WhatsApp (Meta), secondo la relativa informativa privacy.</p>
+
+        <h3>Finalità e base giuridica</h3>
+        <p>I dati sono trattati per dare seguito alla tua richiesta di prenotazione o ordine (esecuzione di misure precontrattuali su tua richiesta). Non c'è profilazione, non vendiamo i dati a terzi e non li usiamo per marketing.</p>
+
+        <h3>Cookie e tecnologie simili</h3>
+        <p>Il sito non usa cookie di profilazione o di tracciamento pubblicitario. Utilizza solo l'archiviazione locale del browser (localStorage) per ricordare il carrello e la lingua scelta: sono dati tecnici che restano sul tuo dispositivo e non ci vengono trasmessi.</p>
+
+        <h3>I tuoi diritti</h3>
+        <p>Poiché i dati inviati tramite WhatsApp restano nella chat con il locale, puoi in ogni momento chiederne accesso, rettifica o cancellazione scrivendo a <a href="mailto:${esc(L.email)}">${esc(L.email)}</a>. Hai inoltre diritto di proporre reclamo al Garante per la protezione dei dati personali.</p>
+
+        <p class="legal-updated">Ultimo aggiornamento: novembre 2026.</p>
+
+        <div class="btnrow" style="margin-top:24px">
+          <a class="btn btn-primary" href="index.html">Torna alla home</a>
+        </div>
+      </div>
+    </section>
+  </main>` +
+    footer() + bottomBar() + scripts() + "\n</body></html>"
+  );
+}
+
 function bigLeaf(size) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 3s-9-1-14 4C1 12 3 20 3 20s1-6 5-10c3-3 8-4 8-4s-5 2-8 6c-2 2.5-3 6-3 6s7 1 12-4c4-4 3-11 3-11z"/></svg>`;
 }
@@ -869,6 +949,7 @@ function build() {
   writeFileSync(join(OUT, "crostiera.html"), annotateEN(pageCrostiera()));
   writeFileSync(join(OUT, "chi-siamo.html"), annotateEN(pageAbout()));
   writeFileSync(join(OUT, "contatti.html"), annotateEN(pageContact()));
+  writeFileSync(join(OUT, "privacy.html"), annotateEN(pagePrivacy()));
 
   // seo
   writeFileSync(join(OUT, "robots.txt"), robots());
@@ -878,7 +959,7 @@ function build() {
   let itemCount = 0;
   menu.sections.forEach((s) => s.groups.forEach((g) => (itemCount += g.items.length)));
   console.log("✓ Build completata in /dist");
-  console.log(`  5 pagine · ${menu.sections.length} sezioni menu · ${itemCount} voci · robots + sitemap`);
+  console.log(`  6 pagine · ${menu.sections.length} sezioni menu · ${itemCount} voci · robots + sitemap`);
 }
 
 build();

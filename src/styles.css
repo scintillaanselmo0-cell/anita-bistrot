@@ -664,3 +664,40 @@ body.noscroll { overflow: hidden; }
 @media (max-width: 860px) {
   .langtoggle { order: 3; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   FOOTER — dati legali + credito creatore
+   ════════════════════════════════════════════════════════════════════════ */
+.footer__legal { border-top: 1px solid rgba(246,239,214,.14); margin-top: 20px; padding-top: 16px; }
+.footer__legal p { margin: 0 0 4px; font-size: 0.78rem; line-height: 1.5; color: rgba(246,239,214,.6); }
+.footer__legal a { color: rgba(246,239,214,.75); }
+
+.footer__credit {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(246,239,214,.14);
+  font-size: 0.82rem; color: rgba(246,239,214,.75);
+}
+.footer__credit strong { color: var(--lime); font-weight: 700; letter-spacing: .02em; }
+.footer__credit-ico { display: inline-flex; gap: 8px; }
+.footer__credit-ico a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 999px;
+  border: 1px solid rgba(246,239,214,.3); color: var(--cream);
+}
+.footer__credit-ico a:hover { background: rgba(246,239,214,.12); }
+.footer__credit-ico svg { width: 17px; height: 17px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PAGINA PRIVACY / LEGALE
+   ════════════════════════════════════════════════════════════════════════ */
+.legal-doc { max-width: 760px; }
+.legal-doc h2 { font-family: var(--serif); font-size: 1.5rem; color: var(--purple); margin: 28px 0 12px; }
+.legal-doc h3 { font-size: 1.05rem; color: var(--ink); margin: 20px 0 6px; }
+.legal-doc p { color: var(--ink-soft); line-height: 1.65; margin-bottom: 10px; }
+.legal-doc a { color: var(--purple); font-weight: 600; }
+.legal-updated { font-size: 0.85rem; color: var(--ink-soft); font-style: italic; margin-top: 18px; }
+.legal-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; background: var(--cream-soft); border-radius: 12px; overflow: hidden; }
+.legal-table th, .legal-table td { text-align: left; padding: 10px 14px; font-size: 0.92rem; vertical-align: top; border-bottom: 1px solid rgba(42,33,48,.08); }
+.legal-table th { color: var(--ink-soft); font-weight: 600; width: 42%; }
+.legal-table td { color: var(--ink); }
+.legal-table tr:last-child th, .legal-table tr:last-child td { border-bottom: none; }
