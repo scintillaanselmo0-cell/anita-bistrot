@@ -139,4 +139,14 @@ export const site = {
     prenotaText:
       "Ciao Anita! Vorrei prenotare una Crostiera intera (€ 38,00). Per quando: __ . Grazie!",
   },
+
+  // ── PANETTONE DELLA CROSTIERA (promo stagionale) ─────────────────────────────
+  // Per spegnere la promo (banner + sezione): metti active: false.
+  panettone: {
+    active: true,
+    bannerText: "🍋 È arrivato il Panettone della Crostiera — Classic & Dark · consegna in tutta Italia",
+    bannerCta: "Ordina",
+    ordinaText:
+      "Ciao Anita! Vorrei ordinare il Panettone della Crostiera. Gusto (Classic / Dark): __ · Quantità: __ . Grazie!",
+  },
 };

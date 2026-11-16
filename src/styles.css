@@ -701,3 +701,54 @@ body.noscroll { overflow: hidden; }
 .legal-table th { color: var(--ink-soft); font-weight: 600; width: 42%; }
 .legal-table td { color: var(--ink); }
 .legal-table tr:last-child th, .legal-table tr:last-child td { border-bottom: none; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PANETTONE DELLA CROSTIERA — banner promo + sezione dedicata
+   ════════════════════════════════════════════════════════════════════════ */
+:root { --crost-blue: #1b3a8f; --crost-blue-deep: #142c6e; }
+
+/* Banner pubblicitario (strip in cima al sito) */
+.promobar {
+  display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+  background: linear-gradient(90deg, var(--crost-blue), var(--crost-blue-deep));
+  color: #fff; text-decoration: none;
+  padding: 10px 16px; text-align: center;
+  border-bottom: 3px solid var(--lemon);
+}
+.promobar__txt { font: 600 0.9rem/1.35 var(--sans); }
+.promobar__cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--lemon); color: var(--crost-blue-deep);
+  font: 700 0.82rem/1 var(--sans); padding: 7px 14px; border-radius: 999px; white-space: nowrap;
+}
+.promobar__cta svg { width: 15px; height: 15px; }
+.promobar:hover .promobar__cta { filter: brightness(1.05); }
+
+/* Sezione dedicata */
+.band--panettone {
+  display: grid; grid-template-columns: 1fr; gap: 12px;
+  background: var(--crost-blue); color: #fff;
+  border-radius: var(--radius-card); overflow: hidden; padding: 16px;
+}
+.panettone__img { display: block; margin: -1px; border-radius: 12px; overflow: hidden; }
+.panettone__img img { width: 100%; height: auto; display: block; }
+.panettone__body { padding: 8px 6px 6px; }
+.panettone__body .eyebrow--lemon { color: var(--lemon); }
+.panettone__body .eyebrow--lemon svg { color: var(--lemon); }
+.panettone__body h2 { font-family: var(--serif); font-size: 2rem; color: #fff; margin: 6px 0 10px; }
+.panettone__body p { color: rgba(255,255,255,.88); margin-bottom: 16px; }
+.panettone__body strong { color: var(--lemon); }
+.band--panettone .btn-outline-ink { border-color: rgba(255,255,255,.55); color: #fff; }
+.band--panettone .btn-outline-ink:hover { background: rgba(255,255,255,.12); }
+
+@media (min-width: 760px) {
+  .band--panettone { grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 28px; padding: 22px; }
+  .panettone__body h2 { font-size: 2.4rem; }
+}
+.panettone__flavs { display: flex; gap: 8px; margin-bottom: 18px; }
+.panettone__flavs span {
+  display: inline-flex; align-items: center;
+  background: var(--lemon); color: var(--crost-blue-deep);
+  font: 700 0.8rem/1 var(--sans); letter-spacing: .04em; text-transform: uppercase;
+  padding: 7px 14px; border-radius: 999px;
+}

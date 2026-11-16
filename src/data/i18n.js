@@ -100,6 +100,16 @@ export const EN = {
   "La crostata al limone della tradizione napoletana, con veri Limoni di Sorrento. Da Anita, a fetta ogni giorno.":
     "The lemon tart of the Neapolitan tradition, with real Sorrento Lemons. At Anita, by the slice every day.",
   "Scopri la Crostiera": "Discover Crostiera",
+
+  // Panettone della Crostiera (promo)
+  "🍋 È arrivato il Panettone della Crostiera — Classic & Dark · consegna in tutta Italia":
+    "🍋 The Crostiera Panettone is here — Classic & Dark · delivery across Italy",
+  "Ordina": "Order",
+  "Novità di Natale": "New for Christmas",
+  "Il Panettone della Crostiera": "The Crostiera Panettone",
+  "La crostata al limone più famosa della Costiera ora è anche panettone, con crema spalmabile inclusa. Consegna in tutta Italia.":
+    "The most famous lemon tart of the Coast is now also a panettone, with spreadable cream included. Delivery across Italy.",
+  "Ordinalo su WhatsApp": "Order it on WhatsApp",
   "Aggiungi all'ordine": "Add to order",
   "La crostata al limone della tradizione napoletana — da gustare da Anita.":
     "The lemon tart of the Neapolitan tradition — to enjoy at Anita.",

@@ -135,13 +135,23 @@ function head(page, { jsonld = "" } = {}) {
 ${jsonld ? `<script type="application/ld+json">${jsonld}</script>` : ""}
 ${ga}
 </head>
-<body>${noticeBar()}`;
+<body>${noticeBar()}${panettoneBanner()}`;
 }
 
 function noticeBar() {
   const n = site.notice;
   if (!n || !n.active) return "";
   return `<div class="notice" data-until="${esc(n.until || "")}" role="status">${esc(n.text)}</div>`;
+}
+
+function panettoneBanner() {
+  const p = site.panettone;
+  if (!p || !p.active) return "";
+  const href = waLink(p.ordinaText);
+  return `<a class="promobar" href="${href}" target="_blank" rel="noopener">
+    <span class="promobar__txt">${esc(p.bannerText)}</span>
+    <span class="promobar__cta">${esc(p.bannerCta)} ${I.wa}</span>
+  </a>`;
 }
 
 function header(active) {
@@ -483,6 +493,26 @@ function pageHome() {
           <p>Scegli tra piadina, club sandwich o saltimbocca, poi aggiungi carne, formaggi e contorni: lo componi tu, lo prepariamo noi.</p>
           <div class="btnrow">
             <a class="btn btn-primary" href="menu.html#piadina">Inizia a comporre</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" id="panettone">
+      <div class="wrap">
+        <div class="band band--panettone">
+          <a class="panettone__img" href="${waLink(site.panettone.ordinaText)}" target="_blank" rel="noopener" aria-label="Ordina il Panettone della Crostiera su WhatsApp">
+            <img src="./assets/crostiera/panettone-banner.webp" width="1200" height="857" loading="lazy" alt="Il Panettone della Crostiera, nei gusti Classic e Dark, con consegna in tutta Italia">
+          </a>
+          <div class="panettone__body">
+            <span class="eyebrow eyebrow--lemon">${I.leaf} Novità di Natale</span>
+            <h2>Il Panettone della Crostiera</h2>
+            <p>La crostata al limone più famosa della Costiera ora è anche panettone, con crema spalmabile inclusa. Consegna in tutta Italia.</p>
+            <div class="panettone__flavs"><span>Classic</span><span>Dark</span></div>
+            <div class="btnrow">
+              <a class="btn btn-primary" href="${waLink(site.panettone.ordinaText)}" target="_blank" rel="noopener">${I.wa} Ordinalo su WhatsApp</a>
+              <a class="btn btn-outline-ink" href="crostiera.html">Scopri la Crostiera</a>
+            </div>
           </div>
         </div>
       </div>
