@@ -197,8 +197,13 @@ export const menu = {
               tags: ["novita"],
               allergens: ["g", "l"],
             }),
-            it("Gnocchetti alla nerano", 12.0, {
-              desc: "zucchine croccanti, caciocavallo e basilico cristallizzato",
+            it("Ziti alla Genovese", 13.0, {
+              desc: "Ziti spezzati avvolti nella tradizionale genovese napoletana, con cipolle stufate lentamente e carne tenerissima.",
+              tags: ["novita"],
+              allergens: ["g"],
+            }),
+            it("Pasta e patane", 10.0, {
+              desc: "La tradizione napoletana in tavola: pasta e patate cotte lentamente, cremose e avvolgenti, con un cuore filante di provola e una spolverata di parmigiano.",
               tags: ["novita"],
               allergens: ["g", "l"],
             }),
